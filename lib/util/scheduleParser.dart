@@ -1,114 +1,62 @@
-import 'dart:math';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:timeeditparser_flutter/objects/booking.dart';
 import 'package:timeeditparser_flutter/objects/day.dart';
+import 'package:timeeditparser_flutter/objects/schedule.dart';
 import 'package:timeeditparser_flutter/objects/week.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' as parser;
-import 'package:html/dom.dart' as dom;
 import 'package:intl/intl.dart';
 
 import '../scheduleItem.dart';
 
-Future<List<Week>> getSchedule() async {
-  http.Response response = await http.get(
-      'https://cloud.timeedit.net/alingsas/web/schemasok/ri1fkXYQ53ZZ2ZQfQo07by76ykYy35oZu0QQZ78Q7Y7mQ5.html');
-  dom.Document document = parser.parse(response.body);
-  return Future<List<Week>>.value(parseSchedule(document));
+const platform = const MethodChannel('scheduleNotification');
+
+Future<List<String>> getScheduleHeaders(String linksbase) async {
+  http.Response response = await http.get(linksbase + "ri.json?sid=3");
+  return List.castFrom<dynamic, String>(json.decode(response.body)["columnheaders"]);
 }
 
-List<Week> parseSchedule(dom.Document doc) {
-  List<Day> weekSchedule = new List<Day>();
-
-  for (dom.Element weekElement in doc.getElementsByClassName("weekDay")) {
-    String dayDateString = weekElement
-        .querySelector('.headlinebottom2')
-        .text
-        .replaceAll("&nbsp;", " ")
-        .trim()
-        .substring(3);
-    DateTime dayDateTime = getFirstDateFromString(dayDateString);
-    if (dayDateTime == null) continue;
-
-    Day currentDaySchedule = new Day(dayDateTime);
-
-    for (dom.Element element in weekElement.querySelectorAll(".bookingDiv")) {
-      String lessonId = element.attributes["data-id"];
-
-      List<String> cols = new List<String>();
-      List<List<String>> teachers = new List<List<String>>();
-
-      for (dom.Element bookingElement
-          in element.querySelectorAll('[class^="c  col"]')) {
-        cols.add(bookingElement.text);
-      }
-
-      // The amount of entries are incomplete. Do not add it.
-      if (cols.length < 5) {
-        continue;
-      }
-
-      // Check if lesson is filtered
-      //if (ApplicationSettings.FilterNames.Contains(cols[1])) continue;
-      //else if (ApplicationSettings.FilterIDs.Contains(lessonId)) continue;
-
-      List<String> teacherslistsplit = cols[2].split(',').toList();
-      for (int i = 0; i < teacherslistsplit.length; i += 2) {
-        teachers.add(teacherslistsplit
-            .getRange(i, min(i + 2, teacherslistsplit.length))
-            .toList());
-      }
-
-      final DateFormat formatter = DateFormat('yyyy-MM-dd ');
-
-      List<String> timesplit =
-          element.attributes["title"].split(',').first.split(" ");
-      DateTime startTime =
-              DateTime.parse(formatter.format(dayDateTime) + timesplit[2]),
-          endTime =
-              DateTime.parse(formatter.format(dayDateTime) + timesplit[4]);
-
-      Booking booking = new Booking(
-          //classes: = cols[0].ToString(),
-          courseName: cols[1],
-          location: cols[3],
-          //Group = cols[4].ToString(),
-          teachers: teachers,
-          startTime: startTime,
-          endTime: endTime,
-          idNum: lessonId);
-      currentDaySchedule.add(booking);
-    }
-    // Finally, add the list of lessons to the weekSchedule before next iteration
-    weekSchedule.add(currentDaySchedule);
-  }
-  // Return the list, **split with weeks**
-  List<Week> weekList = new List<Week>();
-  for (int i = 0; i < weekSchedule.length; i += 5) {
-    Week currentWeek = new Week();
-    for (Day currentday in weekSchedule.getRange(
-        i, min(i + 5, weekSchedule.length - 1))) currentWeek.add(currentday);
-
-    weekList.add(currentWeek);
-  }
-
-  return weekList;
+Future<List<Widget>> getScheduleWidgets(Schedule schedule) async {
+  schedule = await getSchedule(schedule.link());
+  sendSchedule(schedule);
+  return weeksToScheduleItems(schedule);
 }
 
-DateTime getFirstDateFromString(String inputText) {
-  var regex = new RegExp("\\b\\d{4}\\-\\d{2}-\\d{2}\\b");
-  RegExpMatch match = regex.firstMatch(inputText);
-  if (match != null) {
-    return DateTime.parse(inputText.substring(match.start, match.end));
-  }
-  return null;
+Future<void> sendSchedule(Schedule schedule) async {
+  List<Map<String, dynamic>> scheduleItems = new List<Map<String, dynamic>>();
+  schedule.forEach((week) {
+    week.forEach((day) {
+      day.forEach((booking) {
+        scheduleItems.add({
+          "NAME": booking.data[0],
+          "LOCATION": booking.data[3],
+          "TYPE": 0,
+          "TIME": booking.startTime.millisecondsSinceEpoch
+        });
+        scheduleItems.add({
+          "NAME": booking.data[0],
+          "LOCATION": booking.data[3],
+          "TYPE": 1,
+          "TIME": booking.endTime.millisecondsSinceEpoch
+        });
+      });
+    });
+  });
+  await platform.invokeMethod('setNotifSchedule', scheduleItems);
 }
 
-List<Widget> weeksToScheduleItems(List<Week> weeks) {
+Future<Schedule> getSchedule(String link) async {
+  http.Response response = await http.get(link);
+  return Schedule.fromTEditJson(json.decode(response.body));
+}
+
+Future<List<Widget>> weeksToScheduleItems(List<Week> weeks) async {
   List<Widget> weekItems = new List<Widget>();
   for (Week week in weeks) {
+    weekItems.add(new Text("Week " + week.weeknum().toString(), style: TextStyle(fontSize: 20)));
     for (Widget widget in weekToScheduleItems(week)) {
       weekItems.add(widget);
     }
@@ -117,8 +65,13 @@ List<Widget> weeksToScheduleItems(List<Week> weeks) {
 }
 
 List<Widget> weekToScheduleItems(Week week) {
+  final DateFormat formatter = DateFormat('EEEE yyyy-MM-dd');
   List<Widget> dayItems = new List<Widget>();
   for (Day day in week) {
+    if (day != null)
+      dayItems.add(new Text(formatter.format(day.day), style: TextStyle(fontSize: 20)));
+    else
+      dayItems.add(new Text("Unknown Data"));
     for (Widget widget in dayToScheduleItems(day)) {
       dayItems.add(widget);
     }
@@ -128,15 +81,20 @@ List<Widget> weekToScheduleItems(Week week) {
 
 List<Widget> dayToScheduleItems(Day day) {
   List<Widget> dayItems = new List<Widget>();
+  if (day == null) {
+    dayItems.add(new LessonScheduleWidget(courseName: "(Empty day)", tutors: "null", startTime: "null", endTime: "null", location: "null", idNum: "null"));
+    return dayItems;
+  }
   final DateFormat formatter = DateFormat('HH:mm');
   for (Booking booking in day) {
-    dayItems.add(new LessonScheduleWidget(
-        courseName: booking.courseName,
-        location: booking.location,
-        startTime: formatter.format(booking.startTime),
-        endTime: formatter.format(booking.endTime),
-        tutors: booking.description(),
-        idNum: booking.idNum));
+    dayItems.add(new LessonScheduleWidget(courseName: booking.data[0], location: booking.data[3], startTime: formatter.format(booking.startTime), endTime: formatter.format(booking.endTime), tutors: booking.data[2], idNum: booking.id));
   }
   return dayItems;
+}
+
+bool dateTimeToday(DateTime dateToCheck) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final aDate = DateTime(dateToCheck.year, dateToCheck.month, dateToCheck.day);
+  return today == aDate;
 }

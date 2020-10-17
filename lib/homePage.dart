@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:timeeditparser_flutter/util/scheduleParser.dart';
+import 'package:timeeditparser_flutter/scheduleListPage.dart';
 import 'schedulePage.dart';
+import 'util/scheduleSearch.dart';
 
 class HomePage extends StatefulWidget {
   HomePage();
@@ -16,9 +17,13 @@ class _HomePageState extends State<HomePage> {
         body: ListView(children: [
       Text("Hello, Gustaf!", style: Theme.of(context).textTheme.headline4),
       RaisedButton(
-        child: Text("Try to update schedule"),
+        child: Text("Schedules"),
         onPressed: () {
-          getSchedule();
+          showBottomSheet(
+              context: context,
+              builder: (context) {
+                return ScheduleListPage();
+              });
         },
       ),
       Text("Your Schedule for Today:"),

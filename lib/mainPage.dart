@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timeeditparser_flutter/testingPage.dart';
 import 'schedulePage.dart';
 import 'homePage.dart';
 import 'settingsPage.dart';
@@ -29,6 +30,10 @@ class _MainPageState extends State<MainPage> {
           case 3:
             body = SettingsPage();
             appBarText = "Settings";
+            break;
+          case 5:
+            body = TestingPage();
+            appBarText = "Testing Page";
             break;
           default:
             body = HomePage();
@@ -132,6 +137,22 @@ class _MainPageState extends State<MainPage> {
                 onTap: () {
                   Navigator.pop(context);
                   setScreen(4);
+                }),
+            ListTile(
+                title: RichText(
+                    text: TextSpan(
+                        style: Theme.of(context).textTheme.bodyText1,
+                        children: [
+                      WidgetSpan(
+                          child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 2.0),
+                              child: Icon(Icons.device_unknown))),
+                      TextSpan(text: "Test")
+                    ])),
+                onTap: () {
+                  Navigator.pop(context);
+                  setScreen(5);
                 })
           ],
         ))));

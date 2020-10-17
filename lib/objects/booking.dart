@@ -1,20 +1,21 @@
 class Booking {
-  Booking(
-      {this.courseName,
-      this.teachers,
-      this.startTime,
-      this.endTime,
-      this.location,
-      this.idNum});
+  Booking({this.startTime, this.endTime, this.id, this.data});
 
-  final String courseName;
-  final List<List<String>> teachers;
   final DateTime startTime;
   final DateTime endTime;
-  final String location;
-  final String idNum;
+  final String id;
+  final List<String> data;
 
-  String description() => teachers[0][1].toString() + " " + teachers[0][0];
+  factory Booking.fromTEditJson(Map<String, dynamic> json) {
+    DateTime start =
+        DateTime.parse(json["startdate"] + " " + json["starttime"]);
+    DateTime end = DateTime.parse(json["enddate"] + " " + json["endtime"]);
+    return Booking(
+        id: json["id"],
+        data: List.castFrom<dynamic, String>(json["columns"]),
+        startTime: start,
+        endTime: end);
+  }
 }
 
 /*

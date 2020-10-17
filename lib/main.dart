@@ -10,13 +10,9 @@ class TimeEditParser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.orange,
-      ),
-      darkTheme:
-          ThemeData(brightness: Brightness.dark, primarySwatch: Colors.orange),
+      title: 'TimeEdit Parser',
+      theme: ThemeData(brightness: Brightness.light, primarySwatch: Colors.orange, splashColor: Colors.grey),
+      darkTheme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.orange, scaffoldBackgroundColor: Colors.black),
       home: MainPage(),
     );
   }
