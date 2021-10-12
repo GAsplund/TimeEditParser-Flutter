@@ -20,6 +20,7 @@ class _SchedulePageState extends State<SchedulePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         //backgroundColor: Color.fromARGB(255, 230, 230, 230),
+        appBar: AppBar(title: Text("Schedule")),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: FutureBuilder(
             future: getScheduleWidgets(schedule),

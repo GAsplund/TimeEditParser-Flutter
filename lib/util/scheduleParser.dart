@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:timeeditparser_flutter/objects/booking.dart';
@@ -7,7 +5,6 @@ import 'package:timeeditparser_flutter/objects/day.dart';
 import 'package:timeeditparser_flutter/objects/schedule.dart';
 import 'package:timeeditparser_flutter/objects/week.dart';
 
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../scheduleItem.dart';
@@ -51,8 +48,6 @@ Future<void> notifySchedulePlatform(List<Week> weeks) async {
   });
   await platform.invokeMethod('setNotifSchedule', scheduleItems);
 }
-
-Future<Schedule> getSchedule(String link, DateTime start, DateTime end) async {}
 
 Future<List<Widget>> weeksToScheduleItems(List<Week> weeks, int nameIndex, int locationIndex, int tutorIndex) async {
   List<Widget> weekItems = [];

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
-import 'package:timeeditparser_flutter/objects/filter.dart';
-import 'package:timeeditparser_flutter/objects/filterCategory.dart';
 
 class Organization {
   Organization({@required this.orgName});
@@ -29,6 +27,7 @@ class Organization {
     */
     // TODO: Parse elements properly into links
     List<dom.Element> linkElements = document.querySelector("#entrylist").children;
+    return null;
   }
 
   // TODO: Move to a class that turns the filters into Chips
