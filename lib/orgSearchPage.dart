@@ -1,13 +1,10 @@
 //import 'dart:html';
 
-import 'package:date_time_picker/date_time_picker.dart';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:timeeditparser_flutter/objects/schedule.dart';
-import 'package:timeeditparser_flutter/scheduleColumnsPage.dart';
-import 'package:timeeditparser_flutter/scheduleSearchPage.dart';
-import 'package:timeeditparser_flutter/util/scheduleParser.dart';
+import 'package:timeeditparser_flutter/util/orgSearch.dart' as search;
 
 class OrgSearchPage extends StatefulWidget {
   @override
@@ -21,6 +18,8 @@ class _OrgSearchPageState extends State<OrgSearchPage> {
   String endType;
   String endRel;
   String orgName;
+  Timer _debounce;
+
   @override
   Widget build(BuildContext context) {
     editedSchedule ??= new Schedule();
@@ -45,6 +44,7 @@ class _OrgSearchPageState extends State<OrgSearchPage> {
                                     padding: const EdgeInsets.symmetric(horizontal: 12),
                                     child: TextField(
                                       controller: new TextEditingController(text: orgName),
+                                      onChanged: _onSearchChanged,
                                       onSubmitted: (value) {
                                         orgName = value;
                                         setState(() {});
@@ -54,5 +54,19 @@ class _OrgSearchPageState extends State<OrgSearchPage> {
                         ))))
           ],
         )));
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      await search.searchOrg(query);
+      // TODO: Do something with the query results
+    });
   }
 }

@@ -1,14 +1,8 @@
 //import 'dart:html';
 
-import 'package:date_time_picker/date_time_picker.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:timeeditparser_flutter/objects/schedule.dart';
 import 'package:timeeditparser_flutter/orgSearchPage.dart';
-import 'package:timeeditparser_flutter/scheduleColumnsPage.dart';
-import 'package:timeeditparser_flutter/scheduleSearchPage.dart';
-import 'package:timeeditparser_flutter/util/scheduleParser.dart';
 
 class ScheduleNewPage extends StatefulWidget {
   ScheduleNewPage({@required this.newSchedule, this.editedSchedule});
