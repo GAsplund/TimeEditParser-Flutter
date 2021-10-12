@@ -14,80 +14,81 @@ import '../scheduleItem.dart';
 
 const platform = const MethodChannel('scheduleNotification');
 
-Future<List<String>> getScheduleHeaders(String linksbase) async {
-  http.Response response = await http.get(linksbase + "ri.json?sid=3");
-  return List.castFrom<dynamic, String>(json.decode(response.body)["columnheaders"]);
-}
-
+// Get a list of widgets for the schedule ListView.
 Future<List<Widget>> getScheduleWidgets(Schedule schedule) async {
-  schedule = await getSchedule(schedule.link());
-  sendSchedule(schedule);
-  return weeksToScheduleItems(schedule);
+  List<Week> weeks = await schedule.getWeeks();
+  notifySchedulePlatform(weeks);
+  return weeksToScheduleItems(weeks, schedule.nameCatIndex, schedule.locCatIndex, schedule.tutorCatIndex);
 }
 
-Future<void> sendSchedule(Schedule schedule) async {
-  List<Map<String, dynamic>> scheduleItems = new List<Map<String, dynamic>>();
-  schedule.forEach((week) {
+// Send data to platform to handle platform specific events
+Future<void> notifySchedulePlatform(List<Week> weeks) async {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  List<Map<String, dynamic>> scheduleItems = [];
+  weeks.forEach((week) {
     week.forEach((day) {
-      day.forEach((booking) {
-        scheduleItems.add({
-          "NAME": booking.data[0],
-          "LOCATION": booking.data[3],
-          "TYPE": 0,
-          "TIME": booking.startTime.millisecondsSinceEpoch
-        });
-        scheduleItems.add({
-          "NAME": booking.data[0],
-          "LOCATION": booking.data[3],
-          "TYPE": 1,
-          "TIME": booking.endTime.millisecondsSinceEpoch
-        });
-      });
+      if (day != null && day.length > 0) {
+        DateTime dayDate = day.first.startTime;
+        if (DateTime(dayDate.year, dayDate.month, dayDate.day) == today) {
+          day.forEach((booking) {
+            scheduleItems.add({
+              "NAME": booking.data[0],
+              "LOCATION": booking.data[3],
+              "TYPE": 0,
+              "TIME": booking.startTime.millisecondsSinceEpoch
+            });
+            scheduleItems.add({
+              "NAME": booking.data[0],
+              "LOCATION": booking.data[3],
+              "TYPE": 1,
+              "TIME": booking.endTime.millisecondsSinceEpoch
+            });
+          });
+        }
+      }
     });
   });
   await platform.invokeMethod('setNotifSchedule', scheduleItems);
 }
 
-Future<Schedule> getSchedule(String link) async {
-  http.Response response = await http.get(link);
-  return Schedule.fromTEditJson(json.decode(response.body));
-}
+Future<Schedule> getSchedule(String link, DateTime start, DateTime end) async {}
 
-Future<List<Widget>> weeksToScheduleItems(List<Week> weeks) async {
-  List<Widget> weekItems = new List<Widget>();
+Future<List<Widget>> weeksToScheduleItems(List<Week> weeks, int nameIndex, int locationIndex, int tutorIndex) async {
+  List<Widget> weekItems = [];
   for (Week week in weeks) {
     weekItems.add(new Text("Week " + week.weeknum().toString(), style: TextStyle(fontSize: 20)));
-    for (Widget widget in weekToScheduleItems(week)) {
+    for (Widget widget in weekToScheduleItems(week, nameIndex, locationIndex, tutorIndex)) {
       weekItems.add(widget);
     }
   }
   return weekItems;
 }
 
-List<Widget> weekToScheduleItems(Week week) {
+List<Widget> weekToScheduleItems(Week week, int nameIndex, int locationIndex, int tutorIndex) {
   final DateFormat formatter = DateFormat('EEEE yyyy-MM-dd');
-  List<Widget> dayItems = new List<Widget>();
+  List<Widget> dayItems = [];
   for (Day day in week) {
     if (day != null)
       dayItems.add(new Text(formatter.format(day.day), style: TextStyle(fontSize: 20)));
     else
       dayItems.add(new Text("Unknown Data"));
-    for (Widget widget in dayToScheduleItems(day)) {
+    for (Widget widget in dayToScheduleItems(day, nameIndex, locationIndex, tutorIndex)) {
       dayItems.add(widget);
     }
   }
   return dayItems;
 }
 
-List<Widget> dayToScheduleItems(Day day) {
-  List<Widget> dayItems = new List<Widget>();
+List<Widget> dayToScheduleItems(Day day, int nameIndex, int locationIndex, int tutorIndex) {
+  List<Widget> dayItems = [];
   if (day == null) {
-    dayItems.add(new LessonScheduleWidget(courseName: "(Empty day)", tutors: "null", startTime: "null", endTime: "null", location: "null", idNum: "null"));
+    dayItems.add(new LessonScheduleWidget(name: "(Empty day)", tutors: "null", startTime: "null", endTime: "null", location: "null", idNum: "null"));
     return dayItems;
   }
   final DateFormat formatter = DateFormat('HH:mm');
   for (Booking booking in day) {
-    dayItems.add(new LessonScheduleWidget(courseName: booking.data[0], location: booking.data[3], startTime: formatter.format(booking.startTime), endTime: formatter.format(booking.endTime), tutors: booking.data[2], idNum: booking.id));
+    dayItems.add(new LessonScheduleWidget(name: booking.tryGetData(nameIndex), location: booking.tryGetData(locationIndex), startTime: formatter.format(booking.startTime), endTime: formatter.format(booking.endTime), tutors: booking.tryGetData(tutorIndex), idNum: booking.id));
   }
   return dayItems;
 }

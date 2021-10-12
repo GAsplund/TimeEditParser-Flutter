@@ -1,12 +1,15 @@
 import 'dart:collection';
 
+import 'package:jiffy/jiffy.dart';
 import 'package:intl/intl.dart';
 
 import 'day.dart';
 
 class Week extends ListBase<Day> {
   final List<Day> l = [];
-  Week();
+  Week(DateTime weekStart) {
+    for (int d = 1; d < 6; d++) l.add(new Day(Jiffy(weekStart).add(days: d)));
+  }
 
   set length(int newLength) {
     l.length = newLength;

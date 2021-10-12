@@ -1,4 +1,4 @@
-package com.example.timeeditparser_flutter.eventtype;
+package com.example.timeeditparser_flutter;
 
 public enum EventType {
     START,

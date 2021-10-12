@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:timeeditparser_flutter/scheduleListPage.dart';
-import 'schedulePage.dart';
-import 'util/scheduleSearch.dart';
+//import 'package:timeeditparser_flutter/scheduleListPage.dart';
+//import 'schedulePage.dart';
+//import 'util/scheduleSearch.dart';
 
 class HomePage extends StatefulWidget {
   HomePage();
@@ -16,18 +16,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         body: ListView(children: [
       Text("Hello, Gustaf!", style: Theme.of(context).textTheme.headline4),
-      RaisedButton(
-        child: Text("Schedules"),
-        onPressed: () {
-          showBottomSheet(
-              context: context,
-              builder: (context) {
-                return ScheduleListPage();
-              });
-        },
-      ),
-      Text("Your Schedule for Today:"),
-      SchedulePage()
+      Text("Today, there are 0 bookings.")
     ]));
   }
 }

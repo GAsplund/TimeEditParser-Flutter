@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:timeeditparser_flutter/util/scheduleSearch.dart' as search;
+import 'package:timeeditparser_flutter/util/scheduleSearch.dart';
 
 import 'objects/filter.dart';
 import 'objects/filterCategory.dart';
@@ -18,13 +18,21 @@ class ScheduleSearchPage extends StatefulWidget {
 class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
   _ScheduleSearchPageState({this.schedule});
   Schedule schedule;
+  ScheduleSearch search;
+
+  @override
+  void initState() {
+    super.initState();
+    search = ScheduleSearch.fromSchedule(schedule);
+  }
+
   Map<String, String> selectedFilters() => schedule.groups;
   Map<String, List<String>> filterCategories = new Map<String, List<String>>();
   List<FilterCategory> categoryCache;
   String currentCategory;
 
   Future<List<Widget>> getSelectedTags() async {
-    List<Widget> selectedTags = new List<Widget>();
+    List<Widget> selectedTags = [];
     selectedFilters().forEach((key, value) {
       selectedTags.add(Chip(
         label: Text(value),
@@ -39,14 +47,14 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
   }
 
   Future<List<Widget>> getSearchResults() async {
-    if (categoryCache == null) categoryCache = await search.getFilters("https://cloud.timeedit.net/alingsas_ny/web/schemasok/");
+    if (categoryCache == null) categoryCache = await search.getFilters();
     List<FilterCategory> filterCategoriesLocal = new List.from(categoryCache);
     FilterCategory category = filterCategoriesLocal.firstWhere((element) => element.name == currentCategory, orElse: () => null);
-    if (category == null) return new List<Widget>();
+    if (category == null) return [];
 
     List<Filter> filters = new List.from(category.filters);
     filters.removeWhere((filter) => !filterCategories[category.value].any((currentselectedcategory) => currentselectedcategory.startsWith(filter.dataParam + filter.dataPrefix)));
-    List<Filter> newFilters = new List<Filter>();
+    List<Filter> newFilters = [];
     filters.forEach((filter) {
       Map<String, String> selectedOptions = new Map<String, String>();
       filter.options.forEach((key, value) {
@@ -61,8 +69,8 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
       //filter.options.removeWhere((key, value) => !filterCategories[category.value].any((element) => element.endsWith(key + value)))
     });
 
-    List<Widget> widgets = new List<Widget>();
-    Map<String, String> results = await search.searchFilters(category, newFilters);
+    List<Widget> widgets = [];
+    Map<String, String> results = await search.getSearchFilters(category, newFilters);
     results.forEach((key, value) {
       widgets.add(FilterChip(
         label: Text(key),
@@ -90,7 +98,7 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
   }
 
   Future<List<FilterCategory>> getEmptyFilters() async {
-    List<FilterCategory> categories = await search.getFilters(schedule.linksbase);
+    List<FilterCategory> categories = await search.getFilters();
     categories.forEach((element) {
       element.filters.clear();
     });
@@ -98,12 +106,12 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
   }
 
   Future<List<Widget>> getFilterChips() async {
-    List<FilterCategory> categories = (categoryCache != null) ? categoryCache : await search.getFilters(schedule.linksbase);
+    List<FilterCategory> categories = (categoryCache != null) ? categoryCache : await search.getFilters();
     if (categoryCache == null) categoryCache = categories;
-    List<Widget> filterRowWidgets = new List<Widget>();
-    List<Widget> typeWidgets = new List<Widget>();
+    List<Widget> filterRowWidgets = [];
+    List<Widget> typeWidgets = [];
     for (FilterCategory cat in categories) {
-      if (!filterCategories.containsKey(cat.value)) filterCategories[cat.value] = new List<String>();
+      if (!filterCategories.containsKey(cat.value)) filterCategories[cat.value] = [];
       typeWidgets.add(Padding(
           padding: const EdgeInsets.only(left: 8),
           child: ChoiceChip(
@@ -118,7 +126,7 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
           )));
       if (cat.name == currentCategory) {
         for (Filter filter in cat.filters) {
-          List<Widget> filterWidgets = new List<Widget>();
+          List<Widget> filterWidgets = [];
           filter.options.forEach((key, optValue) {
             filterWidgets.add(Padding(
                 padding: const EdgeInsets.only(left: 8),
@@ -151,8 +159,9 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
       }
     }
     return [
-      Row(
+      Wrap(
         children: typeWidgets,
+        alignment: WrapAlignment.spaceBetween,
       ),
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,6 +175,7 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
     return WillPopScope(
         onWillPop: () {
           Navigator.pop(context, schedule);
+          return;
         },
         child: Scaffold(
             body: ListView(

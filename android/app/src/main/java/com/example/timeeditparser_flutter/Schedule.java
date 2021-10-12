@@ -1,7 +1,7 @@
-package com.example.timeeditparser_flutter.schedule;
+package com.example.timeeditparser_flutter;
 
-import com.example.timeeditparser_flutter.notificationevent.NotificationEvent;
-import com.example.timeeditparser_flutter.eventtype.EventType;
+import com.example.timeeditparser_flutter.NotificationEvent;
+import com.example.timeeditparser_flutter.EventType;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -13,14 +13,29 @@ import java.util.Comparator;
 public class Schedule {
     static ArrayList<NotificationEvent> events = new ArrayList<NotificationEvent>();
     public static NotificationEvent getCurrentEvent() {
-        while(events.size() > 0) {
-            if (events.get(0).eventTime.compareTo(Instant.now()) <= 0) {events.remove(0); continue;}
-            else return events.get(0);
+        Boolean eventPassed = false;
+        while(events.size() > 1) {
+            if (events.get(0).eventTime.compareTo(Instant.now()) <= 0) {events.remove(0); eventPassed = true; continue;}
+            else { 
+                NotificationEvent event = events.get(0);
+                event.eventPassed = eventPassed;
+                return event;
+            }
         }
-        NotificationEvent dayEnded = new NotificationEvent();
-        dayEnded.eventType = EventType.DAYEND;
-        dayEnded.eventTime = Instant.now();
-        return dayEnded;
+        
+        if (events.size() == 1) {
+            NotificationEvent event = events.get(0);
+            event.eventPassed = eventPassed;
+            event.eventType = EventType.DAYEND;
+            return event;
+        } else {
+            NotificationEvent event = new NotificationEvent();
+            event.eventPassed = eventPassed;
+            event.eventType = EventType.DAYEND;
+            event.eventTime = Instant.now();
+            return event; 
+        }
+        
     }
 
     public static void setCurrentSchedule(List<Map<String, Object>> schedule) {
@@ -36,6 +51,8 @@ public class Schedule {
             events.add(parsedEvent);
         }
         Collections.sort(events, Comparator.comparing((NotificationEvent e) -> e.eventTime.getEpochSecond()));
+        // Clear the events that have already passed
+        getCurrentEvent();
     }
 
     static EventType intToEventType(Integer i){

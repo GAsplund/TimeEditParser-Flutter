@@ -1,7 +1,7 @@
 package com.example.timeeditparser_flutter;
 
-import com.example.timeeditparser_flutter.schedule.Schedule;
-import com.example.timeeditparser_flutter.schedulebroadcastreceiver.ScheduleBroadcastReceiver;
+import com.example.timeeditparser_flutter.Schedule;
+import com.example.timeeditparser_flutter.ScheduleBroadcastReceiver;
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity;
@@ -22,6 +22,7 @@ public class MainActivity extends FlutterActivity {
           (call, result) -> {
             switch(call.method) {
               case "setNotifSchedule":
+                if (((List<Map<String, Object>>)call.arguments).size() < 1) break;
                 Schedule.setCurrentSchedule((List<Map<String, Object>>)call.arguments);
                 if(ScheduleBroadcastReceiver.currentInstance == null) {
                   ScheduleBroadcastReceiver.currentInstance = new ScheduleBroadcastReceiver(this);
@@ -34,5 +35,11 @@ public class MainActivity extends FlutterActivity {
             }
           }
         );
+  }
+
+  @Override
+  protected void onDestroy() {
+       super.onDestroy();
+       this.sendBroadcast(new Intent().setAction("SCHEDULEBROADCAST_DEST"));
   }
 }

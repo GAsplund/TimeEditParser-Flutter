@@ -1,10 +1,65 @@
-import 'dart:collection';
+import 'dart:convert';
 
 import 'package:intl/intl.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:timeeditparser_flutter/objects/week.dart';
+import 'package:http/http.dart' as http;
 
 import 'booking.dart';
-import 'day.dart';
+
+String relToString(RelativeUnit unit) {
+  switch (unit) {
+    case RelativeUnit.minutes:
+      return "m";
+      break;
+    case RelativeUnit.hours:
+      return "h";
+      break;
+    case RelativeUnit.days:
+      return "d";
+      break;
+    case RelativeUnit.weeks:
+      return "w";
+      break;
+    case RelativeUnit.months:
+      return "n";
+      break;
+    case RelativeUnit.now:
+      return "now";
+      break;
+    case RelativeUnit.setDate:
+    default: // Default should never happen, but catch it anyway
+      return "set";
+      break;
+  }
+}
+
+RelativeUnit stringToRel(String unit) {
+  switch (unit) {
+    case "m":
+      return RelativeUnit.minutes;
+      break;
+    case "h":
+      return RelativeUnit.hours;
+      break;
+    case "d":
+      return RelativeUnit.days;
+      break;
+    case "w":
+      return RelativeUnit.weeks;
+      break;
+    case "n":
+      return RelativeUnit.months;
+      break;
+    case "now":
+      return RelativeUnit.now;
+      break;
+    case "set":
+    default:
+      return RelativeUnit.setDate;
+      break;
+  }
+}
 
 enum RelativeUnit {
   now,
@@ -16,21 +71,35 @@ enum RelativeUnit {
   setDate // use rangeStart or rangeEnd parameter
 }
 
-class Schedule extends ListBase<Week> {
-  final List<Week> l = [];
-  Schedule({this.headers});
+class Schedule {
+  Schedule({this.headers, this.orgName, this.entryPath, this.schedulePath});
   List<String> headers;
 
   String userCustomName = "Unnamed Schedule";
   //List<String> headersOrdered = new List<String>(headers.length);
 
-  String linksbase;
+  final String linkbase = "https://cloud.timeedit.net/";
+  final String orgName; // Example: "chalmers"
+  final String entryPath; // Example: "public"
+  final String schedulePath; // Example: "ri1Q7"
 
-  DateTime rangeStart;
-  DateTime rangeEnd;
+  /*
+
+  String orgName; 
+  String primaryPage; 
+  String secondaryPage; 
+  
+  */
+
+  DateTime rangeStart = DateTime.now();
+  DateTime rangeEnd = Jiffy().add(weeks: 3);
 
   int relativeStart = 0;
   int relativeEnd = 3;
+
+  int nameCatIndex = -1;
+  int locCatIndex = -1;
+  int tutorCatIndex = -1;
 
   RelativeUnit rangeStartType = RelativeUnit.weeks;
   RelativeUnit rangeEndType = RelativeUnit.weeks;
@@ -71,51 +140,186 @@ class Schedule extends ListBase<Week> {
     }
   }
 
+  DateTime getStartDate() {
+    switch (rangeStartType) {
+      case RelativeUnit.now:
+        return DateTime.now();
+      case RelativeUnit.minutes:
+        return Jiffy(DateTime.now()).add(minutes: relativeStart);
+      case RelativeUnit.hours:
+        return Jiffy(DateTime.now()).add(hours: relativeStart);
+        break;
+      case RelativeUnit.days:
+        return Jiffy(DateTime.now()).add(days: relativeStart);
+        break;
+      case RelativeUnit.weeks:
+        return Jiffy(DateTime.now()).add(weeks: relativeStart);
+        break;
+      case RelativeUnit.months:
+        return Jiffy(DateTime.now()).add(months: relativeStart);
+        break;
+      case RelativeUnit.setDate:
+        return rangeStart;
+        break;
+    }
+    return DateTime.now();
+  }
+
+  DateTime getEndDate() {
+    switch (rangeEndType) {
+      case RelativeUnit.now:
+        return DateTime.now();
+      case RelativeUnit.minutes:
+        return Jiffy(DateTime.now()).add(minutes: relativeEnd);
+      case RelativeUnit.hours:
+        return Jiffy(DateTime.now()).add(hours: relativeEnd);
+        break;
+      case RelativeUnit.days:
+        return Jiffy(DateTime.now()).add(days: relativeEnd);
+        break;
+      case RelativeUnit.weeks:
+        return Jiffy(DateTime.now()).add(weeks: relativeEnd);
+        break;
+      case RelativeUnit.months:
+        return Jiffy(DateTime.now()).add(months: relativeEnd);
+        break;
+      case RelativeUnit.setDate:
+        return rangeEnd;
+        break;
+    }
+    return Jiffy(DateTime.now()).add(weeks: 3);
+  }
+
   Map<String, String> groups = new Map<String, String>();
 
-  String link() {
-    return linksbase + "ri.json?sid=3&p=" + getDateParam() + "&objects=" + groups.keys.join(",-1,");
+  Map<int, List<String>> headerFilters = new Map<int, List<String>>();
+  List<int> idFilters = [];
+
+  String _link(bool useJson) {
+    return "$linkbase$orgName/$entryPath/$schedulePath${useJson ? ".json" : ".html"}?p=${getDateParam()}&objects=${groups.keys.join(",-1,")}";
   }
 
-  set length(int newLength) {
-    l.length = newLength;
+  String link() => _link(false);
+  String linkJson() => _link(true);
+
+  // Gets the column headers used for the schedule
+  Future<List<String>> getHeaders() async {
+    http.Response response = await http.get(_link(true));
+    return List.castFrom<dynamic, String>(json.decode(response.body)["columnheaders"]);
   }
 
-  int get length => l.length;
-  Week operator [](int index) => l[index];
-  void operator []=(int index, Week value) {
-    l[index] = value;
+  // Gets a list of all bookings from the search parameters
+  Future<List<Booking>> getBookings() async {
+    http.Response response = await http.get(linkJson());
+    Map<String, dynamic> scheduleJson = json.decode(response.body);
+
+    // TODO: Figure out why the last week doesn't show any bookings
+    // More info gathered: The JSON gives different data than website
+
+    List<Booking> bookings = [];
+
+    for (dynamic item in scheduleJson["reservations"]) {
+      bookings.add(Booking.fromTEditJson(item));
+    }
+    return bookings;
   }
 
-  factory Schedule.fromTEditJson(Map<String, dynamic> json) {
-    //Stopwatch stopwatch = new Stopwatch()..start();
-    List<String> headers = List.castFrom<dynamic, String>(json["columnheaders"]);
-    Schedule schedule = new Schedule(headers: headers);
-    List<Week> weeks = new List<Week>();
+  // Gets a list of all weeks with bookings from the search parameters
+  Future<List<Week>> getWeeks() async {
+    // TODO: Figure out why the last week doesn't show any bookings
+    // More info gathered: The JSON gives different data than website
 
-    for (dynamic item in json["reservations"]) {
-      Booking booking = Booking.fromTEditJson(item);
-      int currentWeek = weekNumber(booking.startTime) - 1;
+    List<Week> weeks = [];
+    DateTime end = getEndDate();
+    DateTime start = getStartDate();
+
+    int weeksAmount = Jiffy(end).week - Jiffy(start).week;
+    for (int w = 0; w <= weeksAmount; w++) {
+      weeks.add(new Week(Jiffy(Jiffy(start).add(weeks: w)).startOf(Units.WEEK)));
+    }
+
+    List<Booking> bookings = await getBookings();
+
+    for (Booking booking in bookings) {
+      int currentWeek = Jiffy(booking.startTime).week - Jiffy(start).week;
       int currentWeekDayNum = booking.startTime.weekday - 1;
-      if (currentWeek >= weeks.length) weeks.length = currentWeek + 1;
 
-      if (weeks[currentWeek] == null) weeks[currentWeek] = new Week();
+      /*if (currentWeek >= weeks.length) {
+        print("this shouldn't happen!");
+      }*/
 
       if (currentWeekDayNum >= weeks[currentWeek].length) weeks[currentWeek].length = currentWeekDayNum + 1;
-
-      if (weeks[currentWeek][currentWeekDayNum] == null) weeks[currentWeek][currentWeekDayNum] = new Day(booking.startTime);
 
       weeks[currentWeek][currentWeekDayNum].add(booking);
     }
 
-    int startIndex = weeks.indexWhere((element) => element != null);
-    for (Week week in weeks.getRange(startIndex, weeks.length)) schedule.add((week == null) ? new Week() : week);
-    //print('Schedule.fromTEditJson(Map<String, dynamic> json) executed in ${stopwatch.elapsed}');
+    return weeks;
+  }
+
+  // Generate a Schedule object from a TimeEdit schedule link
+  factory Schedule.fromTEditLink(String link) {
+    // Parse link as .json uri
+    Uri parsedUri = Uri.dataFromString(link.replaceAll(".html", ".json"));
+    Map<String, String> params = parsedUri.queryParameters;
+
+    List<String> period = params["p"]?.split(",");
+
+    // Get link and try to parse as json
+
+    // TODO: Implement getting Schedule object from TimeEdit link
+    return null;
+  }
+
+  // Generate a Schedule object from a JSON object
+  factory Schedule.fromSettingsJson(Map<String, dynamic> json) {
+    // TODO: Read more data
+    List<String> fromHeaders = List.castFrom<dynamic, String>(json["headers"]);
+    Map<String, String> fromGroups = new Map<String, String>.from(json["groups"]);
+    Schedule schedule = new Schedule(headers: fromHeaders);
+    schedule.groups = fromGroups;
+    schedule.userCustomName = json['customName'];
+    if (json.containsKey("range")) {
+      schedule.rangeStartType = RelativeUnit.values[json['range']['startType']];
+      schedule.rangeEndType = RelativeUnit.values[json['range']['endType']];
+      schedule.rangeStart = DateTime.fromMicrosecondsSinceEpoch(json['range']['startDate']);
+      schedule.rangeEnd = DateTime.fromMicrosecondsSinceEpoch(json['range']['endDate']);
+      schedule.relativeStart = json['range']['relativeStart'];
+      schedule.relativeEnd = json['range']['relativeEnd'];
+    }
+
+    if (json.containsKey("catIndices")) {
+      schedule.nameCatIndex = json['catIndices']['name'];
+      schedule.locCatIndex = json['catIndices']['loc'];
+      schedule.tutorCatIndex = json['catIndices']['tutor'];
+    }
+
     return schedule;
+  }
+
+  // Encode the current schedule to a JSON string
+  String toSettingsJson() {
+    return json.encode({
+      'customName': userCustomName,
+      'headers': headers,
+      'groups': groups,
+      'catIndices': {
+        'name': nameCatIndex,
+        'loc': locCatIndex,
+        'tutor': tutorCatIndex
+      },
+      'range': {
+        'startType': rangeStartType.index,
+        'endType': rangeEndType.index,
+        'startDate': rangeStart.millisecondsSinceEpoch,
+        'endDate': rangeEnd.millisecondsSinceEpoch,
+        'relativeStart': relativeStart,
+        'relativeEnd': relativeEnd
+      }
+    });
   }
 }
 
-int weekNumber(DateTime date) {
+/*int weekNumber(DateTime date) {
   int dayOfYear = int.parse(DateFormat("D").format(date));
   return ((dayOfYear - date.weekday + 10) / 7).floor();
-}
+}*/

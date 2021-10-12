@@ -1,6 +1,6 @@
-package com.example.timeeditparser_flutter.notificationevent;
+package com.example.timeeditparser_flutter;
 
-import com.example.timeeditparser_flutter.eventtype.EventType;
+import com.example.timeeditparser_flutter.EventType;
 import java.time.Instant;
 
 public class NotificationEvent {
@@ -8,4 +8,5 @@ public class NotificationEvent {
     public String eventLocation;
     public EventType eventType;
     public Instant eventTime;
+    public Boolean eventPassed;
 }

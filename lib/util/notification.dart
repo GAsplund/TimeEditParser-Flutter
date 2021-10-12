@@ -15,7 +15,7 @@ class Notification {
   static const MethodChannel _channel = MethodChannel('flutter.notification');
 
   Future setNotifSchedule(Day day) async {
-    List<Map<String, int>> events = new List<Map<String, int>>();
+    List<Map<String, int>> events = [];
     for (Booking booking in day.where((book) => book.endTime.isAfter(DateTime.now()))) {
       if (booking.startTime.isAfter(DateTime.now()))
         events.add({

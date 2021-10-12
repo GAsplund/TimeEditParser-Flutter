@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:timeeditparser_flutter/objects/schedule.dart';
+import 'package:timeeditparser_flutter/scheduleListPage.dart';
 import 'package:timeeditparser_flutter/scheduleModifyPage.dart';
-import 'package:timeeditparser_flutter/util/settings.dart';
+import 'package:timeeditparser_flutter/util/settings.dart' as settings;
 import 'util/scheduleParser.dart';
 
 class SchedulePage extends StatefulWidget {
@@ -13,7 +14,7 @@ class SchedulePage extends StatefulWidget {
 }
 
 class _SchedulePageState extends State<SchedulePage> {
-  Schedule schedule = Settings.currentSchedule;
+  Schedule schedule = settings.currentSchedule;
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +25,33 @@ class _SchedulePageState extends State<SchedulePage> {
             future: getScheduleWidgets(schedule),
             builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
               if (snapshot.hasData) {
-                return ListView(children: snapshot.data);
+                return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (BuildContext bContext, int index) {
+                    return snapshot.data[index];
+                  },
+                );
               } else if (snapshot.hasError) {
-                return Text("Error");
+                return Center(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.only(top: 25),
+                        child: Text(
+                          "There was an error",
+                          style: TextStyle(fontSize: 28),
+                        )),
+                    Padding(padding: const EdgeInsets.only(top: 2), child: Text("You can try reloading the schedule")),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 14),
+                        child: ElevatedButton(
+                          child: Text('Reload', style: TextStyle(fontSize: 20)),
+                          onPressed: () => setState(() {}),
+                        ))
+                  ],
+                ));
               } else {
                 return Center(
                     child: Container(
@@ -47,12 +72,12 @@ class _SchedulePageState extends State<SchedulePage> {
           SpeedDialChild(
             child: Icon(Icons.add),
             backgroundColor: Colors.green,
-            label: 'Add Schedule',
+            label: 'Select Schedule',
             labelStyle: TextStyle(fontSize: 18.0),
             onTap: () => showBottomSheet(
                 context: context,
                 builder: (context) {
-                  return ScheduleModifyPage(newSchedule: true);
+                  return ScheduleListPage();
                 }),
           ),
         ]));
@@ -62,12 +87,17 @@ class _SchedulePageState extends State<SchedulePage> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => ScheduleModifyPage(
+          builder: (context) => Scaffold(
+              appBar: AppBar(
+                title: Text("Modify Schedule"),
+              ),
+              body: ScheduleModifyPage(
                 editedSchedule: schedule ?? new Schedule(),
                 newSchedule: false,
-              )),
+              ))),
     );
 
-    schedule = (result is Schedule) ? result : schedule;
+    settings.currentSchedule = (result is Schedule) ? result : schedule;
+    schedule = settings.currentSchedule;
   }
 }
