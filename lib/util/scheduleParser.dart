@@ -7,7 +7,7 @@ import 'package:timeeditparser_flutter/objects/week.dart';
 
 import 'package:intl/intl.dart';
 
-import '../scheduleItem.dart';
+import '../widgets/scheduleItem.dart';
 
 const platform = const MethodChannel('scheduleNotification');
 

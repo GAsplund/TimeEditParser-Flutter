@@ -13,7 +13,7 @@ class ScheduleSearch extends Organization {
   String listPath;
 
   String getLink() {
-    return "${super.linkbase}${super.orgName}/$listPath/$schedulePath.html";
+    return "${super.linkbase}${super.orgName}/web/$listPath/$schedulePath.html";
   }
 
   // Function to get the filters for the current schedule search page.
@@ -46,7 +46,7 @@ class ScheduleSearch extends Organization {
     if (!useCache /*|| !Application.Current.Properties.ContainsKey("groupsCache")*/) {
       Map<String, String> groups = new Map<String, String>();
 
-      http.Response response = await http.get(linkbase + this.orgName + "/objects.html?fr=t&partajax=t&im=f&sid=3&l=sv_SE&types=183" + filters);
+      http.Response response = await http.get(linkbase + this.orgName + "/web/$listPath/objects.html?fr=t&partajax=t&im=f" + filters);
       dom.Document document = parser.parse(response.body);
 
       // Select divs with classes clickable2 and searchObject
@@ -82,6 +82,6 @@ class ScheduleSearch extends Organization {
   }
 
   factory ScheduleSearch.fromSchedule(Schedule schedule) {
-    return null;
+    return ScheduleSearch(orgName: schedule.orgName, listPath: schedule.entryPath, schedulePath: schedule.schedulePath);
   }
 }

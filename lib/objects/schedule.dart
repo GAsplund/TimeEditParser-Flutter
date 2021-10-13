@@ -79,9 +79,9 @@ class Schedule {
   //List<String> headersOrdered = new List<String>(headers.length);
 
   final String linkbase = "https://cloud.timeedit.net/";
-  final String orgName; // Example: "chalmers"
-  final String entryPath; // Example: "public"
-  final String schedulePath; // Example: "ri1Q7"
+  String orgName; // Example: "chalmers"
+  String entryPath; // Example: "public"
+  String schedulePath; // Example: "ri1Q7"
 
   /*
 
@@ -195,16 +195,20 @@ class Schedule {
   Map<int, List<String>> headerFilters = new Map<int, List<String>>();
   List<int> idFilters = [];
 
-  String _link(bool useJson) {
-    return "$linkbase$orgName/$entryPath/$schedulePath${useJson ? ".json" : ".html"}?p=${getDateParam()}&objects=${groups.keys.join(",-1,")}";
+  String _link(bool useJson, bool addFilters) {
+    // Where does sid=3 come from?
+    // It's stored in links-database. This link is fetched elsewhere. Maybe get
+    // there?
+    String params = addFilters ? "?p=${getDateParam()}&objects=${groups.keys.join(",-1,")}&sid=3" : "";
+    return "$linkbase$orgName/web/$entryPath/$schedulePath${useJson ? ".json" : ".html"}$params";
   }
 
-  String link() => _link(false);
-  String linkJson() => _link(true);
+  String link() => _link(false, true);
+  String linkJson() => _link(true, true);
 
   // Gets the column headers used for the schedule
   Future<List<String>> getHeaders() async {
-    http.Response response = await http.get(_link(true));
+    http.Response response = await http.get(_link(true, false));
     return List.castFrom<dynamic, String>(json.decode(response.body)["columnheaders"]);
   }
 

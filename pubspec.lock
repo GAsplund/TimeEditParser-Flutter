@@ -64,6 +64,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.1"
+  debounce_throttle:
+    dependency: "direct main"
+    description:
+      name: debounce_throttle
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   expansion_tile_card:
     dependency: "direct main"
     description:
@@ -261,6 +268,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2+7"
+  simple_observable:
+    dependency: transitive
+    description:
+      name: simple_observable
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   sky_engine:
     dependency: transitive
     description: flutter

@@ -8,7 +8,7 @@ import 'day.dart';
 class Week extends ListBase<Day> {
   final List<Day> l = [];
   Week(DateTime weekStart) {
-    for (int d = 1; d < 6; d++) l.add(new Day(Jiffy(weekStart).add(days: d)));
+    for (int d = 0; d < 6; d++) l.add(new Day(Jiffy(weekStart).add(days: d)));
   }
 
   set length(int newLength) {

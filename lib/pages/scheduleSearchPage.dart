@@ -20,8 +20,8 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
 
   @override
   void initState() {
-    super.initState();
     search = ScheduleSearch.fromSchedule(schedule);
+    super.initState();
   }
 
   Map<String, String> selectedFilters() => schedule.groups;

@@ -2,9 +2,10 @@ import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:timeeditparser_flutter/objects/schedule.dart';
-import 'package:timeeditparser_flutter/orgSearchPage.dart';
+import 'package:timeeditparser_flutter/pages/orgSearchPage.dart';
 import 'package:timeeditparser_flutter/pages/scheduleColumnsPage.dart';
 import 'package:timeeditparser_flutter/pages/scheduleSearchPage.dart';
+import 'package:timeeditparser_flutter/widgets/subMenuButton.dart';
 
 enum RangeType {
   datetime,
@@ -57,6 +58,7 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
       }
     }
 
+    // WillPopScope for returning data to invoking Widget
     return WillPopScope(
         onWillPop: () {
           Navigator.pop(context, editedSchedule);
@@ -75,23 +77,40 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                     setState(() {});
                   },
                 )),
-            // TODO: Get data from sub-navs
             Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Location")),
+            // Schedule path submenu
+            SubMenuButton(
+              title: Text("${editedSchedule.orgName}"),
+              onPressed: () => _editLocation(context),
+            ),
+            Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Entrance")),
+            // Temp, please replace later
             Padding(
-                padding: const EdgeInsets.only(bottom: 8, left: 12, right: 12),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
-                      padding: const EdgeInsets.all(0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                      ),
-                      elevation: 2,
-                    ),
-                    onPressed: () {
-                      _editLocation(context);
-                    },
-                    child: ListTile(title: Text("${editedSchedule.orgName}"), trailing: Icon(Icons.arrow_forward)))),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: TextField(
+                  controller: new TextEditingController(text: editedSchedule.entryPath),
+                  onSubmitted: (value) {
+                    editedSchedule.entryPath = value;
+                    setState(() {});
+                  },
+                )),
+            Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Name")),
+            // Temp, please replace later
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: TextField(
+                  controller: new TextEditingController(text: editedSchedule.schedulePath),
+                  onSubmitted: (value) async {
+                    editedSchedule.schedulePath = value;
+                    editedSchedule.headers = await editedSchedule.getHeaders();
+                    setState(() {});
+                  },
+                )),
+
+            Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Objects")),
+            // Schedule objects selection submenu
+            // TODO: Replace with SubMenuButton
+            // (We dont need link validation anymore)
             FutureBuilder(
                 future: validLink(),
                 builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -129,36 +148,16 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                                     },
                               child: ListTile(title: Text("Categories"), trailing: linkStatus)));
                 }),
-            Padding(
-                padding: const EdgeInsets.only(bottom: 8, left: 12, right: 12),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
-                      padding: const EdgeInsets.all(0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                      ),
-                      elevation: 2,
-                    ),
-                    onPressed: () {
-                      _editColumns(context);
-                    },
-                    child: ListTile(title: Text("Schedule columns"), trailing: Icon(Icons.arrow_forward)))),
-            Padding(
-                padding: const EdgeInsets.only(bottom: 8, left: 12, right: 12),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
-                      padding: const EdgeInsets.all(0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                      ),
-                      elevation: 2,
-                    ),
-                    onPressed: () {
-                      _editFilters(context);
-                    },
-                    child: ListTile(title: Text("Schedule filters"), trailing: Icon(Icons.arrow_forward)))),
+            // Schedule columns submenu
+            SubMenuButton(
+              title: Text("Schedule columns"),
+              onPressed: () => _editColumns(context),
+            ),
+            // Schedule filters submenu
+            SubMenuButton(
+              title: Text("Schedule filters"),
+              onPressed: () => _editFilters(context),
+            ),
 
             // Setting time range
             Padding(padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, left: 10.0), child: Text("Time Range")),
@@ -512,16 +511,16 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
   }
 
   _editLocation(BuildContext context) async {
-    final result = await Navigator.push(
+    /*final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => Scaffold(
-              appBar: AppBar(
-                title: Text("Schedule Filters"),
-              ),
-              body: OrgSearchPage(/*editedSchedule: editedSchedule ?? new Schedule()*/))),
+      MaterialPageRoute(builder: (context) => Scaffold(body: OrgSearchPage(/*editedSchedule: editedSchedule ?? new Schedule()*/))),
     );
 
-    editedSchedule = (result is Schedule) ? result : editedSchedule;
+    editedSchedule = (result is Schedule) ? result : editedSchedule;*/
+    final result = await showSearch(context: context, delegate: OrgSearch());
+    if (result != null && result.isNotEmpty)
+      setState(() {
+        editedSchedule.orgName = result;
+      });
   }
 }

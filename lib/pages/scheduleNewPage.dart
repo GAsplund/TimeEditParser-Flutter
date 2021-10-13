@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timeeditparser_flutter/objects/schedule.dart';
-import 'package:timeeditparser_flutter/orgSearchPage.dart';
+import 'package:timeeditparser_flutter/pages/orgSearchPage.dart';
 
 class ScheduleNewPage extends StatefulWidget {
   ScheduleNewPage({@required this.newSchedule, this.editedSchedule});
@@ -41,7 +41,7 @@ class _ScheduleNewPageState extends State<ScheduleNewPage> {
                       onTap: () => showBottomSheet(
                           context: context,
                           builder: (context) {
-                            return new OrgSearchPage();
+                            //return new OrgSearchPage();
                           }),
                       child: Padding(
                           child: Column(
