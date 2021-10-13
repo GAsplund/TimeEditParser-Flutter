@@ -5,7 +5,7 @@ class FilterCategory {
   FilterCategory();
   String name;
   String value;
-  List<Filter> filters = [];
+  List<SearchFilter> filters = [];
 
   factory FilterCategory.fromDomElement(dom.Element domElement, dom.Element filtersLists) {
     // Example match: <option value="183" selected="">Klass</option>
@@ -25,7 +25,7 @@ class FilterCategory {
     }
 
     for (dom.Element filterSelectionNode in filterSelectionNodes) {
-      filterCategory.filters.add(Filter.fromDomElement(filterSelectionNode));
+      filterCategory.filters.add(SearchFilter.fromDomElement(filterSelectionNode));
     }
     return filterCategory;
   }

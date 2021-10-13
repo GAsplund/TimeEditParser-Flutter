@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:timeeditparser_flutter/objects/filter.dart';
+import 'package:timeeditparser_flutter/objects/filterCategory.dart';
+import 'package:timeeditparser_flutter/objects/schedule.dart';
 import 'package:timeeditparser_flutter/util/scheduleSearch.dart';
-
-import 'objects/filter.dart';
-import 'objects/filterCategory.dart';
-import 'objects/schedule.dart';
 
 class ScheduleSearchPage extends StatefulWidget {
   ScheduleSearchPage({this.schedule});
@@ -52,15 +50,15 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
     FilterCategory category = filterCategoriesLocal.firstWhere((element) => element.name == currentCategory, orElse: () => null);
     if (category == null) return [];
 
-    List<Filter> filters = new List.from(category.filters);
+    List<SearchFilter> filters = new List.from(category.filters);
     filters.removeWhere((filter) => !filterCategories[category.value].any((currentselectedcategory) => currentselectedcategory.startsWith(filter.dataParam + filter.dataPrefix)));
-    List<Filter> newFilters = [];
+    List<SearchFilter> newFilters = [];
     filters.forEach((filter) {
       Map<String, String> selectedOptions = new Map<String, String>();
       filter.options.forEach((key, value) {
         if (filterCategories[category.value].any((element) => element.endsWith(key + value))) selectedOptions[key] = value;
       });
-      Filter newFilter = new Filter();
+      SearchFilter newFilter = new SearchFilter();
       newFilter.dataName = filter.dataName;
       newFilter.dataParam = filter.dataParam;
       newFilter.dataPrefix = filter.dataPrefix;
@@ -125,7 +123,7 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
             },
           )));
       if (cat.name == currentCategory) {
-        for (Filter filter in cat.filters) {
+        for (SearchFilter filter in cat.filters) {
           List<Widget> filterWidgets = [];
           filter.options.forEach((key, optValue) {
             filterWidgets.add(Padding(

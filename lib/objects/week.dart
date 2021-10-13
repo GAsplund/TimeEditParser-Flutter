@@ -1,7 +1,7 @@
 import 'dart:collection';
 
-import 'package:jiffy/jiffy.dart';
 import 'package:intl/intl.dart';
+import 'package:jiffy/jiffy.dart';
 
 import 'day.dart';
 

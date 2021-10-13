@@ -1,5 +1,3 @@
-//import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:timeeditparser_flutter/objects/schedule.dart';
 import 'package:timeeditparser_flutter/orgSearchPage.dart';

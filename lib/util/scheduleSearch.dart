@@ -67,7 +67,7 @@ class ScheduleSearch extends Organization {
   }
 
   // Gets all the possible filters for the search page.
-  Future<Map<String, String>> getSearchFilters(FilterCategory items, List<Filter> filters) async {
+  Future<Map<String, String>> getSearchFilters(FilterCategory items, List<SearchFilter> filters) async {
     //String link = "https://cloud.timeedit.net/chalmers/web/public/" /*ApplicationSettings.LinkBase*/ + "objects.html?" + "fr=t&partajax=t&im=f&sid=3&l=sv_SE";
     String filtersText = "&types=" + items.value;
 

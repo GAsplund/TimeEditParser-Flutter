@@ -1,8 +1,8 @@
 import 'package:html/dom.dart' as dom;
 
 // TODO: Maybe rename Filter to SearchFilter?
-class Filter {
-  Filter();
+class SearchFilter {
+  SearchFilter();
   String dataName;
   String dataParam;
   String dataPrefix;
@@ -10,8 +10,8 @@ class Filter {
   // Key: Filter name | Value: Filter value
   Map<String, String> options = new Map<String, String>();
 
-  factory Filter.fromDomElement(dom.Element domElement) {
-    Filter filter = new Filter();
+  factory SearchFilter.fromDomElement(dom.Element domElement) {
+    SearchFilter filter = new SearchFilter();
     filter.dataName = domElement.attributes["data-name"];
     filter.dataParam = domElement.attributes["data-param"];
     filter.dataPrefix = domElement.attributes["data-prefix"];

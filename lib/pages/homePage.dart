@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'package:timeeditparser_flutter/util/settings.dart' as settings;
 import 'package:timeeditparser_flutter/objects/schedule.dart';
-//import 'package:timeeditparser_flutter/scheduleListPage.dart';
-//import 'schedulePage.dart';
-//import 'util/scheduleSearch.dart';
+import 'package:timeeditparser_flutter/util/settings.dart' as settings;
 
 class HomePage extends StatefulWidget {
   HomePage();

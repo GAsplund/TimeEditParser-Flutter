@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:timeeditparser_flutter/scheduleListPage.dart';
-import 'package:timeeditparser_flutter/testingPage.dart';
+import 'package:timeeditparser_flutter/pages/scheduleListPage.dart';
+import 'package:timeeditparser_flutter/pages/testingPage.dart';
 import 'package:timeeditparser_flutter/util/theming.dart';
-import 'schedulePage.dart';
+
 import 'homePage.dart';
+import 'schedulePage.dart';
 
 class MainPage extends StatefulWidget {
   MainPage({this.theming});

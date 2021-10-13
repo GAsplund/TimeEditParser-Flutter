@@ -1,8 +1,6 @@
-//import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:timeeditparser_flutter/objects/schedule.dart';
-import 'package:timeeditparser_flutter/scheduleItem.dart';
+import 'package:timeeditparser_flutter/widgets/scheduleItem.dart';
 
 class ScheduleColumnsPage extends StatefulWidget {
   ScheduleColumnsPage({this.editedSchedule, Schedule schedule});
