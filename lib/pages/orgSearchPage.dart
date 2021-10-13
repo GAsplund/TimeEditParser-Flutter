@@ -13,10 +13,6 @@ class OrgSearchPage extends StatefulWidget {
 
 class _OrgSearchPageState extends State<OrgSearchPage> {
   Schedule editedSchedule;
-  String startType;
-  String startRel;
-  String endType;
-  String endRel;
   String orgName;
   Timer _debounce;
 

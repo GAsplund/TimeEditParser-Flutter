@@ -5,9 +5,9 @@ import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:timeeditparser_flutter/objects/schedule.dart';
-import 'package:timeeditparser_flutter/scheduleColumnsPage.dart';
-import 'package:timeeditparser_flutter/scheduleSearchPage.dart';
-import 'package:timeeditparser_flutter/util/scheduleParser.dart';
+import 'package:timeeditparser_flutter/orgSearchPage.dart';
+import 'package:timeeditparser_flutter/pages/scheduleColumnsPage.dart';
+import 'package:timeeditparser_flutter/pages/scheduleSearchPage.dart';
 
 enum RangeType {
   datetime,
@@ -79,17 +79,22 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                   },
                 )),
             // TODO: Get data from sub-navs
-            Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Search Link")),
-            Text("Removed temporarily"),
-            /*Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: TextField(
-                  controller: new TextEditingController(text: editedSchedule.linksbase),
-                  onSubmitted: (value) {
-                    editedSchedule.linksbase = value;
-                    setState(() {});
-                  },
-                )),*/
+            Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Location")),
+            Padding(
+                padding: const EdgeInsets.only(bottom: 8, left: 12, right: 12),
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.white,
+                      padding: const EdgeInsets.all(0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                      ),
+                      elevation: 2,
+                    ),
+                    onPressed: () {
+                      _editLocation(context);
+                    },
+                    child: ListTile(title: Text("${editedSchedule.orgName}"), trailing: Icon(Icons.arrow_forward)))),
             FutureBuilder(
                 future: validLink(),
                 builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -504,6 +509,20 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                 title: Text("Schedule Filters"),
               ),
               body: ScheduleColumnsPage(editedSchedule: editedSchedule ?? new Schedule()))),
+    );
+
+    editedSchedule = (result is Schedule) ? result : editedSchedule;
+  }
+
+  _editLocation(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => Scaffold(
+              appBar: AppBar(
+                title: Text("Schedule Filters"),
+              ),
+              body: OrgSearchPage(/*editedSchedule: editedSchedule ?? new Schedule()*/))),
     );
 
     editedSchedule = (result is Schedule) ? result : editedSchedule;

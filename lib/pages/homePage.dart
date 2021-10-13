@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:timeeditparser_flutter/util/settings.dart' as settings;
-import 'objects/schedule.dart';
+import 'package:timeeditparser_flutter/objects/schedule.dart';
 //import 'package:timeeditparser_flutter/scheduleListPage.dart';
 //import 'schedulePage.dart';
 //import 'util/scheduleSearch.dart';

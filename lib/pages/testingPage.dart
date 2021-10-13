@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timeeditparser_flutter/homePage.dart';
 import 'package:timeeditparser_flutter/scheduleListPage.dart';
-import 'package:timeeditparser_flutter/schedulePage.dart';
+import 'package:timeeditparser_flutter/pages/schedulePage.dart';
 
 class TestingPage extends StatefulWidget {
   TestingPage();
