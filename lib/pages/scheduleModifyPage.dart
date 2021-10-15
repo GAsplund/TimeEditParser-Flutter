@@ -511,16 +511,31 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
   }
 
   _editLocation(BuildContext context) async {
-    /*final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Scaffold(body: OrgSearchPage(/*editedSchedule: editedSchedule ?? new Schedule()*/))),
-    );
-
-    editedSchedule = (result is Schedule) ? result : editedSchedule;*/
     final result = await showSearch(context: context, delegate: OrgSearch());
-    if (result != null && result.isNotEmpty)
+    if (result != null && result.isNotEmpty && result != editedSchedule.orgName)
       setState(() {
         editedSchedule.orgName = result;
+        editedSchedule.entryPath = null;
+        editedSchedule.schedulePath = null;
+      });
+  }
+
+  _editEntry(BuildContext context) async {
+    //final result = await showSearch(context: context, delegate: OrgSearch());
+    final result = null;
+    if (result != null && result.isNotEmpty && result != editedSchedule.entryPath)
+      setState(() {
+        editedSchedule.entryPath = result;
+        editedSchedule.schedulePath = null;
+      });
+  }
+
+  _editSchedulePath(BuildContext context) async {
+    //final result = await showSearch(context: context, delegate: OrgSearch());
+    final result = null;
+    if (result != null && result.isNotEmpty && result != editedSchedule.schedulePath)
+      setState(() {
+        editedSchedule.schedulePath = result;
       });
   }
 }

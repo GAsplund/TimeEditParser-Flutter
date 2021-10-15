@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as http;
+import 'package:timeeditparser_flutter/objects/linkList.dart';
 
 class Organization {
   Organization({@required this.orgName});
@@ -15,19 +16,28 @@ class Organization {
     //+ ApplicationSettings.LinkGroups.Values.join(",-1,");
   }
 
-  Future<Map<String, String>> getLinks() async {
-    http.Response response = await http.get("$linkbase$orgName/");
+  Future<List<LinkList>> getEntrances() async {
+    http.Response response = await http.get("$linkbase$orgName/web/");
     dom.Document document = parser.parse(response.body);
 
-    // Select object under div id entrylist
-    /*
-    <a class="items" href="/chalmers/web/public/">
-      Öppen schemavisning <span class="text"> Public schedule search (no authentication required)</span>
-    </a>
-    */
-    // TODO: Parse elements properly into links
-    List<dom.Element> linkElements = document.querySelector("#entrylist").children;
-    return null;
+    // Get the DOM objects for the entrance links
+    List<dom.Element> entries = document.getElementById("entrylist").children;
+
+    List<LinkList> entrances = [];
+
+    // Read the DOM objects into list
+    for (dom.Element entry in entries) {
+      // Check if the entry is protected. Do not add to results.
+      // (No support for authentication)
+      if (entry.getElementsByTagName(".lock").length > 0)
+        continue;
+      else {
+        String description = entry.getElementsByClassName("text").first.text;
+        String entrancePath = entry.attributes["href"].substring(orgName.length + 5);
+        entrances.add(LinkList(name: entry.text, description: description, entryPath: entrancePath));
+      }
+    }
+    return entrances;
   }
 
   // TODO: Move to a class that turns the filters into Chips
