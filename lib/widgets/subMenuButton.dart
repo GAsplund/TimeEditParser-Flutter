@@ -2,22 +2,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SubMenuButton extends StatefulWidget {
-  SubMenuButton({@required this.title, this.onPressed});
-  Widget title;
-  Function onPressed;
+  SubMenuButton({@required this.title, this.onPressed, this.disabled});
+  final Widget title;
+  final Function onPressed;
+  final bool disabled;
 
   @override
-  _SubMenuButtonState createState() => _SubMenuButtonState(title: title, onPressed: onPressed);
+  _SubMenuButtonState createState() => _SubMenuButtonState(title: title, onPressed: onPressed, disabled: disabled);
 }
 
 class _SubMenuButtonState extends State<SubMenuButton> {
-  _SubMenuButtonState({@required this.title, this.onPressed});
-  Widget title;
-  Function onPressed;
+  _SubMenuButtonState({@required this.title, this.onPressed, this.disabled});
+  final Widget title;
+  final Function onPressed;
+  final bool disabled;
 
   @override
   Widget build(BuildContext context) {
     var _title = widget.title;
+    var _disabled = (widget.disabled == null) ? false : widget.disabled;
     return Padding(
         padding: const EdgeInsets.only(bottom: 8, left: 12, right: 12),
         child: ElevatedButton(
@@ -29,7 +32,7 @@ class _SubMenuButtonState extends State<SubMenuButton> {
               ),
               elevation: 2,
             ),
-            onPressed: onPressed,
+            onPressed: _disabled ? null : onPressed,
             child: ListTile(title: _title, trailing: Icon(Icons.arrow_forward))));
   }
 }

@@ -94,64 +94,36 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
             ),
             Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Entrance")),
             SubMenuButton(
-              title: Text("${editedSchedule.entryPath}"),
+              title: Text("${(editedSchedule.entryPath == null) ? '(Unset)' : editedSchedule.entryPath}"),
               onPressed: () => _editEntry(context),
+              disabled: editedSchedule.orgName == null,
             ),
             Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Name")),
             SubMenuButton(
-              title: Text("${editedSchedule.schedulePath}"),
+              title: Text("${(editedSchedule.schedulePath == null) ? '(Unset)' : editedSchedule.schedulePath}"),
               onPressed: () => _editSchedulePath(context),
+              disabled: editedSchedule.entryPath == null,
             ),
             Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Objects")),
             // Schedule objects selection submenu
             // TODO: Replace with SubMenuButton
             // (We dont need link validation anymore)
-            FutureBuilder(
-                future: validLink(),
-                builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                  Widget linkStatus;
-                  bool disableButton = true;
-                  if (snapshot.hasData) {
-                    if (snapshot.data) {
-                      linkStatus = Icon(Icons.arrow_forward);
-                      disableButton = false;
-                    } else
-                      linkStatus = Icon(Icons.clear);
-                  } else if (snapshot.hasError) {
-                    linkStatus = Icon(Icons.clear);
-                  } else {
-                    linkStatus = CircularProgressIndicator();
-                  }
-                  return
-                      // TODO: Grey out if link is not valid.
-
-                      Padding(
-                          padding: const EdgeInsets.only(top: 10, left: 12, right: 12, bottom: 8),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.white,
-                                padding: const EdgeInsets.all(0),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                                ),
-                                elevation: 2,
-                              ),
-                              onPressed: disableButton
-                                  ? null
-                                  : () {
-                                      _scheduleSearch(context);
-                                    },
-                              child: ListTile(title: Text("Categories"), trailing: linkStatus)));
-                }),
+            SubMenuButton(
+              title: Text("Categories"),
+              onPressed: () => _scheduleSearch(context),
+              disabled: editedSchedule.schedulePath == null,
+            ),
             // Schedule columns submenu
             SubMenuButton(
               title: Text("Schedule columns"),
               onPressed: () => _editColumns(context),
+              disabled: editedSchedule.schedulePath == null,
             ),
             // Schedule filters submenu
             SubMenuButton(
               title: Text("Schedule filters"),
               onPressed: () => _editFilters(context),
+              disabled: editedSchedule.schedulePath == null,
             ),
 
             // Setting time range
@@ -534,8 +506,8 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
       setState(() {
         editedSchedule.entryPath = result;
         editedSchedule.schedulePath = null;
-        editedSchedule.groups.clear();
-        editedSchedule.headers.clear();
+        editedSchedule.groups?.clear();
+        editedSchedule.headers = [];
         currentEntrance = LinkList(entryPath: result, orgName: editedSchedule.orgName);
       });
   }

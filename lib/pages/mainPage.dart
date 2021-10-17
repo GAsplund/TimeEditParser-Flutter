@@ -18,14 +18,21 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   _MainPageState({this.theming});
   Theming theming;
+  List<Widget> _widgetOptions;
 
   int _selectedIndex = 0;
-  static List<Widget> _widgetOptions = <Widget>[
-    HomePage(),
-    SchedulePage(),
-    ScheduleListPage(),
-    TestingPage()
-  ];
+  @override
+  void initState() {
+    _widgetOptions = <Widget>[
+      HomePage(
+        theming: theming,
+      ),
+      SchedulePage(),
+      ScheduleListPage(),
+      TestingPage()
+    ];
+    super.initState();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
