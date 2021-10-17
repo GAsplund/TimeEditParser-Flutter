@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:timeeditparser_flutter/objects/linkList.dart';
+import 'package:timeeditparser_flutter/objects/organization.dart';
 import 'package:timeeditparser_flutter/objects/schedule.dart';
+import 'package:timeeditparser_flutter/pages/itemSelectPage.dart';
 import 'package:timeeditparser_flutter/pages/orgSearchPage.dart';
 import 'package:timeeditparser_flutter/pages/scheduleColumnsPage.dart';
 import 'package:timeeditparser_flutter/pages/scheduleSearchPage.dart';
@@ -25,6 +30,8 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
   _ScheduleModifyPageState({@required this.newSchedule, this.editedSchedule});
   final bool newSchedule;
   Schedule editedSchedule;
+  Organization currentOrg;
+  LinkList currentEntrance;
   String startType;
   String startRel;
   String endType;
@@ -32,6 +39,8 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
   @override
   Widget build(BuildContext context) {
     editedSchedule ??= new Schedule();
+    currentOrg ??= (editedSchedule.orgName != null) ? Organization(orgName: editedSchedule.orgName) : null;
+    currentEntrance ??= (editedSchedule.orgName != null) ? LinkList(entryPath: editedSchedule.entryPath, orgName: editedSchedule.orgName) : null;
 
     if (startType == null || endType == null) {
       switch (editedSchedule.rangeStartType) {
@@ -84,29 +93,15 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
               onPressed: () => _editLocation(context),
             ),
             Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Entrance")),
-            // Temp, please replace later
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: TextField(
-                  controller: new TextEditingController(text: editedSchedule.entryPath),
-                  onSubmitted: (value) {
-                    editedSchedule.entryPath = value;
-                    setState(() {});
-                  },
-                )),
+            SubMenuButton(
+              title: Text("${editedSchedule.entryPath}"),
+              onPressed: () => _editEntry(context),
+            ),
             Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Name")),
-            // Temp, please replace later
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: TextField(
-                  controller: new TextEditingController(text: editedSchedule.schedulePath),
-                  onSubmitted: (value) async {
-                    editedSchedule.schedulePath = value;
-                    editedSchedule.headers = await editedSchedule.getHeaders();
-                    setState(() {});
-                  },
-                )),
-
+            SubMenuButton(
+              title: Text("${editedSchedule.schedulePath}"),
+              onPressed: () => _editSchedulePath(context),
+            ),
             Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Objects")),
             // Schedule objects selection submenu
             // TODO: Replace with SubMenuButton
@@ -517,22 +512,40 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
         editedSchedule.orgName = result;
         editedSchedule.entryPath = null;
         editedSchedule.schedulePath = null;
+        currentOrg = Organization(orgName: result);
       });
   }
 
   _editEntry(BuildContext context) async {
-    //final result = await showSearch(context: context, delegate: OrgSearch());
-    final result = null;
+    List<LinkList> entrances = await currentOrg?.getEntrances();
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => ItemSelectPage(items: [
+                for (LinkList entrance in entrances)
+                  [
+                    entrance.name,
+                    entrance.description,
+                    entrance.entryPath
+                  ]
+              ])),
+    );
     if (result != null && result.isNotEmpty && result != editedSchedule.entryPath)
       setState(() {
         editedSchedule.entryPath = result;
         editedSchedule.schedulePath = null;
+        editedSchedule.groups.clear();
+        editedSchedule.headers.clear();
+        currentEntrance = LinkList(entryPath: result, orgName: editedSchedule.orgName);
       });
   }
 
   _editSchedulePath(BuildContext context) async {
-    //final result = await showSearch(context: context, delegate: OrgSearch());
-    final result = null;
+    List<List<String>> links = await currentEntrance.getLinks();
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ItemSelectPage(items: links)),
+    );
     if (result != null && result.isNotEmpty && result != editedSchedule.schedulePath)
       setState(() {
         editedSchedule.schedulePath = result;

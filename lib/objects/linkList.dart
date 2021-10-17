@@ -5,7 +5,7 @@ import 'package:html/dom.dart' as dom;
 import 'package:timeeditparser_flutter/objects/organization.dart';
 
 class LinkList extends Organization {
-  LinkList({@required this.entryPath, this.name, this.description});
+  LinkList({@required String orgName, @required this.entryPath, this.name, this.description}) : super(orgName: orgName);
   String name;
   String description;
   String entryPath;
@@ -23,9 +23,11 @@ class LinkList extends Organization {
     for (dom.Element entry in entries) {
       String name = entry.getElementsByClassName("greenlink").first.innerHtml;
       String description = entry.getElementsByClassName("linklistsubtext").first.innerHtml;
+      String destPath = entry.attributes["href"].substring(orgName.length + entryPath.length + 7, entry.attributes["href"].length - 5);
       entrances.add([
         name,
-        description
+        description,
+        destPath
       ]);
     }
     return entrances;

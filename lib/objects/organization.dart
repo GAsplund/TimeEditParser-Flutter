@@ -33,8 +33,8 @@ class Organization {
         continue;
       else {
         String description = entry.getElementsByClassName("text").first.text;
-        String entrancePath = entry.attributes["href"].substring(orgName.length + 5);
-        entrances.add(LinkList(name: entry.text, description: description, entryPath: entrancePath));
+        String entrancePath = entry.attributes["href"].substring(orgName.length + 6, entry.attributes["href"].length - 1);
+        entrances.add(LinkList(name: entry.text, description: description, entryPath: entrancePath, orgName: this.orgName));
       }
     }
     return entrances;

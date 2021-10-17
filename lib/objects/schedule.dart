@@ -246,6 +246,8 @@ class Schedule {
 
     for (Booking booking in bookings) {
       int currentWeek = Jiffy(booking.startTime).week - Jiffy(start).week;
+      if (currentWeek >= weeks.length || currentWeek < 0) continue;
+
       int currentWeekDayNum = booking.startTime.weekday - 1;
 
       /*if (currentWeek >= weeks.length) {
