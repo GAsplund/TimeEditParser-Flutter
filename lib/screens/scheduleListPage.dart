@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:timeeditparser_flutter/objects/schedule.dart';
-import 'package:timeeditparser_flutter/pages/scheduleNewPage.dart';
-import 'package:timeeditparser_flutter/pages/scheduleModifyPage.dart';
-import 'package:timeeditparser_flutter/util/settings.dart' as settings;
+import 'package:timeedit/models/schedule.dart';
+import 'package:timeeditparser_flutter/screens/scheduleNewPage.dart';
+import 'package:timeeditparser_flutter/screens/scheduleModifyPage.dart';
+import 'package:timeeditparser_flutter/utilities/settings.dart' as settings;
 
 class ScheduleListPage extends StatefulWidget {
   ScheduleListPage();

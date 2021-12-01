@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timeeditparser_flutter/objects/schedule.dart';
-import 'package:timeeditparser_flutter/util/theming.dart';
+import 'package:timeedit/models/schedule.dart';
+import 'package:timeeditparser_flutter/utilities/theming.dart';
 
 SharedPreferences prefs;
 Future<void> getSettings() async {

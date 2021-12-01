@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:timeeditparser_flutter/objects/filter.dart';
-import 'package:timeeditparser_flutter/objects/filterCategory.dart';
-import 'package:timeeditparser_flutter/objects/schedule.dart';
-import 'package:timeeditparser_flutter/util/scheduleSearch.dart';
+import 'package:timeedit/models/search_filter.dart';
+import 'package:timeedit/models/filter_category.dart';
+import 'package:timeedit/models/schedule.dart';
+import 'package:timeedit/utilities/schedule_search.dart';
 
 class ScheduleSearchPage extends StatefulWidget {
   ScheduleSearchPage({this.schedule});
@@ -58,10 +58,7 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
       filter.options.forEach((key, value) {
         if (filterCategories[category.value].any((element) => element.endsWith(key + value))) selectedOptions[key] = value;
       });
-      SearchFilter newFilter = new SearchFilter();
-      newFilter.dataName = filter.dataName;
-      newFilter.dataParam = filter.dataParam;
-      newFilter.dataPrefix = filter.dataPrefix;
+      SearchFilter newFilter = new SearchFilter(filter.dataName, filter.dataParam, filter.dataPrefix);
       newFilter.options = selectedOptions;
       newFilters.add(newFilter);
       //filter.options.removeWhere((key, value) => !filterCategories[category.value].any((element) => element.endsWith(key + value)))

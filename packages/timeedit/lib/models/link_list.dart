@@ -22,7 +22,7 @@ class LinkList extends Organization {
     for (dom.Element entry in entries) {
       String name = entry.getElementsByClassName("greenlink").first.innerHtml;
       String description = entry.getElementsByClassName("linklistsubtext").first.innerHtml;
-      String destPath = entry.attributes["href"].substring(orgName.length + entryPath.length + 7, entry.attributes["href"].length - 5);
+      String destPath = entry.attributes["href"]!.substring(orgName.length + entryPath.length + 7, entry.attributes["href"]!.length - 5);
       entrances.add([
         name,
         description,

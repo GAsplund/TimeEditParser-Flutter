@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:timeeditparser_flutter/objects/booking.dart';
-import 'package:timeeditparser_flutter/objects/day.dart';
+import 'package:timeedit/models/booking.dart';
+import 'package:timeedit/models/day.dart';
 
 enum EventType { aboutToStart, start, aboutToEnd, end }
 

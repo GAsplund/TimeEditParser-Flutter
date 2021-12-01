@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timeeditparser_flutter/screens/scheduleListPage.dart';
 import 'package:timeeditparser_flutter/screens/testingPage.dart';
-import 'package:timeeditparser_flutter/util/theming.dart';
+import 'package:timeeditparser_flutter/utilities/theming.dart';
 
 import 'homePage.dart';
 import 'schedulePage.dart';

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:timeeditparser_flutter/models/schedule.dart';
+import 'package:timeedit/models/schedule.dart';
 import 'package:timeeditparser_flutter/screens/scheduleListPage.dart';
 import 'package:timeeditparser_flutter/screens/scheduleModifyPage.dart';
-import 'package:timeeditparser_flutter/utilities/scheduleParser.dart';
+import 'package:timeeditparser_flutter/utilities/schedule_parser.dart';
 import 'package:timeeditparser_flutter/utilities/settings.dart' as settings;
 
 class SchedulePage extends StatefulWidget {

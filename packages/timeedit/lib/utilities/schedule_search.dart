@@ -22,20 +22,20 @@ class ScheduleSearch extends Organization {
     // Make sure that link is valid
     if (!Uri.parse(getLink()).isAbsolute) return [];
 
-    http.Response response = await http.get(getLink());
+    http.Response response = await http.get(Uri(path: getLink()));
     dom.Document document = parser.parse(response.body);
 
     List<FilterCategory> filterCategories = [];
 
-    dom.Element filtersList = document.querySelector("#fancytypeselector");
+    dom.Element? filtersList = document.querySelector("#fancytypeselector");
 
     if (filtersList == null) return [];
 
     // Example match: <form id="fancyformfieldsearch" name="fancyformfieldsearch" data-loadselected="f">
-    dom.Element filtersLists = document.querySelector("#fancyformfieldsearch");
+    dom.Element? filtersLists = document.querySelector("#fancyformfieldsearch");
 
     for (dom.Element filterOption in filtersList.querySelectorAll("option")) {
-      filterCategories.add(FilterCategory.fromDomElement(filterOption, filtersLists));
+      filterCategories.add(FilterCategory.fromDomElement(filterOption, filtersLists!));
     }
     return filterCategories;
   }
@@ -46,7 +46,7 @@ class ScheduleSearch extends Organization {
     if (!useCache /*|| !Application.Current.Properties.ContainsKey("groupsCache")*/) {
       Map<String, String> groups = new Map<String, String>();
 
-      http.Response response = await http.get(linkbase + this.orgName + "/web/$listPath/objects.html?fr=t&partajax=t&im=f" + filters);
+      http.Response response = await http.get(Uri(path: linkbase + orgName + "/web/$listPath/objects.html?fr=t&partajax=t&im=f" + filters));
       dom.Document document = parser.parse(response.body);
 
       // Select divs with classes clickable2 and searchObject
@@ -54,7 +54,7 @@ class ScheduleSearch extends Organization {
       if (groupElements.length == 0) return new Map<String, String>();
 
       for (dom.Element groupElement in groupElements) {
-        groups[groupElement.attributes["data-name"]] = groupElement.attributes["data-id"];
+        groups[groupElement.attributes["data-name"] ?? ""] = groupElement.attributes["data-id"] ?? "";
       }
 
       return groups;

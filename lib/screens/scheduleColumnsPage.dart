@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timeeditparser_flutter/objects/schedule.dart';
+import 'package:timeedit/models/schedule.dart';
 import 'package:timeeditparser_flutter/widgets/scheduleItem.dart';
 
 class ScheduleColumnsPage extends StatefulWidget {

@@ -72,7 +72,7 @@ enum RelativeUnit {
 }
 
 class Schedule {
-  Schedule({this.headers, this.orgName, this.entryPath, this.schedulePath});
+  Schedule({required this.headers, required this.orgName, required this.entryPath, required this.schedulePath});
   List<String> headers;
 
   String userCustomName = "Unnamed Schedule";
@@ -92,7 +92,7 @@ class Schedule {
   */
 
   DateTime rangeStart = DateTime.now();
-  DateTime rangeEnd = Jiffy().add(weeks: 3);
+  DateTime rangeEnd = Jiffy().add(weeks: 3).dateTime;
 
   int relativeStart = 0;
   int relativeEnd = 3;
@@ -118,22 +118,16 @@ class Schedule {
     switch (relativeUnit) {
       case RelativeUnit.minutes:
         return relative.toString() + ".m";
-        break;
       case RelativeUnit.hours:
         return relative.toString() + ".h";
-        break;
       case RelativeUnit.days:
         return relative.toString() + ".d";
-        break;
       case RelativeUnit.weeks:
         return relative.toString() + ".w";
-        break;
       case RelativeUnit.months:
         return relative.toString() + ".n";
-        break;
       case RelativeUnit.setDate:
         return DateFormat('yyyyMMdd').format(rangeStart) + ".x";
-        break;
       case RelativeUnit.now:
       default:
         return "0.w";
@@ -145,22 +139,17 @@ class Schedule {
       case RelativeUnit.now:
         return DateTime.now();
       case RelativeUnit.minutes:
-        return Jiffy(DateTime.now()).add(minutes: relativeStart);
+        return Jiffy(DateTime.now()).add(minutes: relativeStart).dateTime;
       case RelativeUnit.hours:
-        return Jiffy(DateTime.now()).add(hours: relativeStart);
-        break;
+        return Jiffy(DateTime.now()).add(hours: relativeStart).dateTime;
       case RelativeUnit.days:
-        return Jiffy(DateTime.now()).add(days: relativeStart);
-        break;
+        return Jiffy(DateTime.now()).add(days: relativeStart).dateTime;
       case RelativeUnit.weeks:
-        return Jiffy(DateTime.now()).add(weeks: relativeStart);
-        break;
+        return Jiffy(DateTime.now()).add(weeks: relativeStart).dateTime;
       case RelativeUnit.months:
-        return Jiffy(DateTime.now()).add(months: relativeStart);
-        break;
+        return Jiffy(DateTime.now()).add(months: relativeStart).dateTime;
       case RelativeUnit.setDate:
         return rangeStart;
-        break;
     }
     return DateTime.now();
   }
@@ -170,19 +159,19 @@ class Schedule {
       case RelativeUnit.now:
         return DateTime.now();
       case RelativeUnit.minutes:
-        return Jiffy(DateTime.now()).add(minutes: relativeEnd);
+        return Jiffy(DateTime.now()).add(minutes: relativeEnd).dateTime;
       case RelativeUnit.hours:
-        return Jiffy(DateTime.now()).add(hours: relativeEnd);
+        return Jiffy(DateTime.now()).add(hours: relativeEnd).dateTime;
       case RelativeUnit.days:
-        return Jiffy(DateTime.now()).add(days: relativeEnd);
+        return Jiffy(DateTime.now()).add(days: relativeEnd).dateTime;
       case RelativeUnit.weeks:
-        return Jiffy(DateTime.now()).add(weeks: relativeEnd);
+        return Jiffy(DateTime.now()).add(weeks: relativeEnd).dateTime;
       case RelativeUnit.months:
-        return Jiffy(DateTime.now()).add(months: relativeEnd);
+        return Jiffy(DateTime.now()).add(months: relativeEnd).dateTime;
       case RelativeUnit.setDate:
         return rangeEnd;
       default:
-        return Jiffy(DateTime.now()).add(weeks: 3);
+        return Jiffy(DateTime.now()).add(weeks: 3).dateTime;
     }
   }
 
@@ -204,13 +193,13 @@ class Schedule {
 
   // Gets the column headers used for the schedule
   Future<List<String>> getHeaders() async {
-    http.Response response = await http.get(_link(true, false));
+    http.Response response = await http.get(Uri(path: _link(true, false)));
     return List.castFrom<dynamic, String>(json.decode(response.body)["columnheaders"]);
   }
 
   // Gets a list of all bookings from the search parameters
   Future<List<Booking>> getBookings() async {
-    http.Response response = await http.get(linkJson());
+    http.Response response = await http.get(Uri(path: linkJson()));
     Map<String, dynamic> scheduleJson = json.decode(response.body);
 
     // TODO: Figure out why the last week doesn't show any bookings
@@ -235,7 +224,7 @@ class Schedule {
 
     int weeksAmount = Jiffy(end).week - Jiffy(start).week;
     for (int w = 0; w <= weeksAmount; w++) {
-      weeks.add(new Week(Jiffy(Jiffy(start).add(weeks: w)).startOf(Units.WEEK)));
+      weeks.add(Week(Jiffy(Jiffy(start).add(weeks: w)).startOf(Units.WEEK).dateTime));
     }
 
     List<Booking> bookings = await getBookings();
@@ -258,13 +247,14 @@ class Schedule {
     return weeks;
   }
 
-  // Generate a Schedule object from a TimeEdit schedule link
+  // TODO: Implement fromTEditLink factory
+  /*// Generate a Schedule object from a TimeEdit schedule link
   factory Schedule.fromTEditLink(String link) {
     // Parse link as .json uri
     Uri parsedUri = Uri.dataFromString(link.replaceAll(".html", ".json"));
     Map<String, String> params = parsedUri.queryParameters;
 
-    List<String> period = params["p"]?.split(",");
+    List<String>? period = params["p"]?.split(",");
 
     // Get link and try to parse as json
 
@@ -272,16 +262,28 @@ class Schedule {
     // Possibly used for importing directly from a schedule link instead of
     // manually typing in stuff. Dunno if needed though.
     return null;
-  }
+  }*/
 
   // Generate a Schedule object from a JSON object
   factory Schedule.fromSettingsJson(Map<String, dynamic> json) {
     // TODO: Check if more data needs to be read
     List<String> fromHeaders = List.castFrom<dynamic, String>(json["headers"]);
     Map<String, String> fromGroups = new Map<String, String>.from(json["groups"]);
-    Schedule schedule = new Schedule(headers: fromHeaders);
+
+    String entryPath = "";
+    String orgName = "";
+    String schedulePath = "";
+    if (json.containsKey("path")) {
+      orgName = json['entry']['orgName'];
+      String entryPath = json['entry']['entryPath'];
+      schedulePath = json['entry']['schedulePath'];
+    }
+
+    Schedule schedule = Schedule(headers: fromHeaders, entryPath: entryPath, orgName: orgName, schedulePath: schedulePath);
+
     schedule.groups = fromGroups;
     schedule.userCustomName = json['customName'];
+
     if (json.containsKey("range")) {
       schedule.rangeStartType = RelativeUnit.values[json['range']['startType']];
       schedule.rangeEndType = RelativeUnit.values[json['range']['endType']];
@@ -295,12 +297,6 @@ class Schedule {
       schedule.nameCatIndex = json['catIndices']['name'];
       schedule.locCatIndex = json['catIndices']['loc'];
       schedule.tutorCatIndex = json['catIndices']['tutor'];
-    }
-
-    if (json.containsKey("path")) {
-      schedule.orgName = json['entry']['orgName'];
-      schedule.entryPath = json['entry']['entryPath'];
-      schedule.schedulePath = json['entry']['schedulePath'];
     }
 
     return schedule;

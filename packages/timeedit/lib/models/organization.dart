@@ -20,7 +20,7 @@ class Organization {
     dom.Document document = parser.parse(response.body);
 
     // Get the DOM objects for the entrance links
-    List<dom.Element> entries = document.getElementById("entrylist").children;
+    List<dom.Element> entries = document.getElementById("entrylist")!.children;
 
     List<LinkList> entrances = [];
 
@@ -32,7 +32,7 @@ class Organization {
         continue;
       else {
         String description = entry.getElementsByClassName("text").first.text;
-        String entrancePath = entry.attributes["href"].substring(orgName.length + 6, entry.attributes["href"].length - 1);
+        String entrancePath = entry.attributes["href"]!.substring(orgName.length + 6, entry.attributes["href"]!.length - 1);
         entrances.add(LinkList(name: entry.text, description: description, entryPath: entrancePath, orgName: this.orgName));
       }
     }
