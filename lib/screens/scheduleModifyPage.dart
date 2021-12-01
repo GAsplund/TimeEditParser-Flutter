@@ -1,13 +1,13 @@
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:timeeditparser_flutter/objects/linkList.dart';
-import 'package:timeeditparser_flutter/objects/organization.dart';
-import 'package:timeeditparser_flutter/objects/schedule.dart';
-import 'package:timeeditparser_flutter/pages/itemSelectPage.dart';
-import 'package:timeeditparser_flutter/pages/orgSearchPage.dart';
-import 'package:timeeditparser_flutter/pages/scheduleColumnsPage.dart';
-import 'package:timeeditparser_flutter/pages/scheduleSearchPage.dart';
+import 'package:timeedit/models/link_list.dart';
+import 'package:timeedit/models/organization.dart';
+import 'package:timeedit/models/schedule.dart';
+import 'package:timeeditparser_flutter/screens/itemSelectPage.dart';
+import 'package:timeeditparser_flutter/screens/orgSearchPage.dart';
+import 'package:timeeditparser_flutter/screens/scheduleColumnsPage.dart';
+import 'package:timeeditparser_flutter/screens/scheduleSearchPage.dart';
 import 'package:timeeditparser_flutter/widgets/subMenuButton.dart';
 
 enum RangeType {
@@ -38,7 +38,7 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
   Widget build(BuildContext context) {
     editedSchedule ??= new Schedule();
     currentOrg ??= (editedSchedule.orgName != null) ? Organization(orgName: editedSchedule.orgName) : null;
-    currentEntrance ??= (editedSchedule.orgName != null) ? LinkList(entryPath: editedSchedule.entryPath, orgName: editedSchedule.orgName) : null;
+    currentEntrance ??= (editedSchedule.orgName != null) ? LinkList(entryPath: editedSchedule.entryPath, orgName: editedSchedule.orgName, description: '', name: '') : null;
 
     if (startType == null || endType == null) {
       switch (editedSchedule.rangeStartType) {
@@ -506,7 +506,7 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
         editedSchedule.schedulePath = null;
         editedSchedule.groups?.clear();
         editedSchedule.headers = [];
-        currentEntrance = LinkList(entryPath: result, orgName: editedSchedule.orgName);
+        currentEntrance = LinkList(entryPath: result, orgName: editedSchedule.orgName, description: '', name: '');
       });
   }
 

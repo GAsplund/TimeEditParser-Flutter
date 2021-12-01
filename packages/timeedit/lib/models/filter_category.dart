@@ -1,8 +1,8 @@
-import 'searchFilter.dart';
+import 'search_filter.dart';
 import 'package:html/dom.dart' as dom;
 
 class FilterCategory {
-  FilterCategory();
+  FilterCategory(this.name, this.value);
   String name;
   String value;
   List<SearchFilter> filters = [];

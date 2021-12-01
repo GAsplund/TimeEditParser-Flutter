@@ -10,14 +10,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  web_scraper: ^0.0.6
-  intl: ^0.16.0
-  jiffy: ^3.0.1
+  web_scraper: ^0.1.4
+  intl: ^0.17.0
+  jiffy: ^4.1.0
+  http: ^0.13.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
+  flutter_lints: ^1.0.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

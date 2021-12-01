@@ -1,17 +1,16 @@
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
-import 'package:timeeditparser_flutter/models/organization.dart';
+import 'package:timeedit/models/organization.dart';
 
 class LinkList extends Organization {
-  LinkList({@required String orgName, @required this.entryPath, this.name, this.description}) : super(orgName: orgName);
+  LinkList({required String orgName, required this.entryPath, required this.name, required this.description}) : super(orgName: orgName);
   String name;
   String description;
   String entryPath;
 
   Future<List<List<String>>> getLinks() async {
-    http.Response response = await http.get("$linkbase$orgName/web/$entryPath");
+    http.Response response = await http.get(Uri(path: "$linkbase$orgName/web/$entryPath"));
     dom.Document document = parser.parse(response.body);
 
     // Get the DOM objects for the link entries

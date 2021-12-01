@@ -173,21 +173,17 @@ class Schedule {
         return Jiffy(DateTime.now()).add(minutes: relativeEnd);
       case RelativeUnit.hours:
         return Jiffy(DateTime.now()).add(hours: relativeEnd);
-        break;
       case RelativeUnit.days:
         return Jiffy(DateTime.now()).add(days: relativeEnd);
-        break;
       case RelativeUnit.weeks:
         return Jiffy(DateTime.now()).add(weeks: relativeEnd);
-        break;
       case RelativeUnit.months:
         return Jiffy(DateTime.now()).add(months: relativeEnd);
-        break;
       case RelativeUnit.setDate:
         return rangeEnd;
-        break;
+      default:
+        return Jiffy(DateTime.now()).add(weeks: 3);
     }
-    return Jiffy(DateTime.now()).add(weeks: 3);
   }
 
   Map<String, String> groups = new Map<String, String>();

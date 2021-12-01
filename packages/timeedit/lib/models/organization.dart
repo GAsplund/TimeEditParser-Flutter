@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as http;
 import 'package:timeedit/models/link_list.dart';
 
 class Organization {
-  Organization({@required this.orgName});
+  Organization({required this.orgName});
   final String linkbase = "https://cloud.timeedit.net/";
 
   final String orgName;
@@ -17,7 +16,7 @@ class Organization {
   }
 
   Future<List<LinkList>> getEntrances() async {
-    http.Response response = await http.get("$linkbase$orgName/web/");
+    http.Response response = await http.get(Uri(path: "$linkbase$orgName/web/"));
     dom.Document document = parser.parse(response.body);
 
     // Get the DOM objects for the entrance links
