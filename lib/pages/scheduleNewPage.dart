@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:timeeditparser_flutter/objects/schedule.dart';
-import 'package:timeeditparser_flutter/pages/orgSearchPage.dart';
 
 class ScheduleNewPage extends StatefulWidget {
   ScheduleNewPage({@required this.newSchedule, this.editedSchedule});

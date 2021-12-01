@@ -273,12 +273,14 @@ class Schedule {
     // Get link and try to parse as json
 
     // TODO: Implement getting Schedule object from TimeEdit link
+    // Possibly used for importing directly from a schedule link instead of
+    // manually typing in stuff. Dunno if needed though.
     return null;
   }
 
   // Generate a Schedule object from a JSON object
   factory Schedule.fromSettingsJson(Map<String, dynamic> json) {
-    // TODO: Read more data
+    // TODO: Check if more data needs to be read
     List<String> fromHeaders = List.castFrom<dynamic, String>(json["headers"]);
     Map<String, String> fromGroups = new Map<String, String>.from(json["groups"]);
     Schedule schedule = new Schedule(headers: fromHeaders);
@@ -297,6 +299,12 @@ class Schedule {
       schedule.nameCatIndex = json['catIndices']['name'];
       schedule.locCatIndex = json['catIndices']['loc'];
       schedule.tutorCatIndex = json['catIndices']['tutor'];
+    }
+
+    if (json.containsKey("path")) {
+      schedule.orgName = json['entry']['orgName'];
+      schedule.entryPath = json['entry']['entryPath'];
+      schedule.schedulePath = json['entry']['schedulePath'];
     }
 
     return schedule;
@@ -320,6 +328,11 @@ class Schedule {
         'endDate': rangeEnd.millisecondsSinceEpoch,
         'relativeStart': relativeStart,
         'relativeEnd': relativeEnd
+      },
+      'path': {
+        'orgName': orgName,
+        'entryPath': entryPath,
+        'schedulePath': schedulePath
       }
     });
   }

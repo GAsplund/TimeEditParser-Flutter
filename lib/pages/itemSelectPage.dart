@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class ItemSelectPage extends StatefulWidget {
   ItemSelectPage({@required this.items});
-  List<List<String>> items;
+  final List<List<String>> items;
 
   @override
   _ItemSelectPageState createState() => _ItemSelectPageState(items: this.items);

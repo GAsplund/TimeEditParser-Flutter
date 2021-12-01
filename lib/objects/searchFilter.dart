@@ -1,6 +1,5 @@
 import 'package:html/dom.dart' as dom;
 
-// TODO: Maybe rename Filter to SearchFilter?
 class SearchFilter {
   SearchFilter();
   String dataName;
