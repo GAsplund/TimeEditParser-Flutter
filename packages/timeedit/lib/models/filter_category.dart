@@ -9,16 +9,14 @@ class FilterCategory {
 
   factory FilterCategory.fromDomElement(dom.Element domElement, dom.Element filtersLists) {
     // Example match: <option value="183" selected="">Klass</option>
-    FilterCategory filterCategory = new FilterCategory();
-    filterCategory.name = domElement.text;
-    filterCategory.value = domElement.attributes["value"];
+    FilterCategory filterCategory = FilterCategory(domElement.text, domElement.attributes["value"] ?? "");
 
     // Example match: <fieldset id="ffset183" class="fancyfieldset  fancyNoBorder">
-    dom.Element filterCollectionNode = filtersLists.querySelector("#ffset" + filterCategory.value);
+    dom.Element? filterCollectionNode = filtersLists.querySelector("#ffset" + filterCategory.value);
 
     // Example match:
     // <select class="fancyformfieldsearchselect objectFieldsParam " multiple="" size="14" data-param="fe" data-tefieldkind="CATEGORY" data-name="Period" name="183_22" data-prefix="22" id="ff183_22">
-    List<dom.Element> filterSelectionNodes = filterCollectionNode.querySelectorAll("select");
+    List<dom.Element> filterSelectionNodes = filterCollectionNode!.querySelectorAll("select");
 
     if (filterSelectionNodes.isEmpty) {
       return filterCategory;
