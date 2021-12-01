@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:timeeditparser_flutter/pages/scheduleListPage.dart';
-import 'package:timeeditparser_flutter/pages/testingPage.dart';
+import 'package:timeeditparser_flutter/screens/scheduleListPage.dart';
+import 'package:timeeditparser_flutter/screens/testingPage.dart';
 import 'package:timeeditparser_flutter/util/theming.dart';
 
 import 'homePage.dart';

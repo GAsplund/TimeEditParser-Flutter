@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:timeeditparser_flutter/objects/booking.dart';
-import 'package:timeeditparser_flutter/objects/day.dart';
-import 'package:timeeditparser_flutter/objects/schedule.dart';
-import 'package:timeeditparser_flutter/objects/week.dart';
+import 'package:timeedit/models/booking.dart';
+import 'package:timeedit/models/day.dart';
+import 'package:timeedit/models/schedule.dart';
+import 'package:timeedit/models/week.dart';
 
 import 'package:intl/intl.dart';
 
-import '../widgets/scheduleItem.dart';
+import 'package:timeeditparser_flutter/widgets/scheduleItem.dart';
 
 const platform = const MethodChannel('scheduleNotification');
 

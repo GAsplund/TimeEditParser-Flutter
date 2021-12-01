@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:flutter/material.dart';
-import 'package:timeeditparser_flutter/util/orgSearch.dart' as search;
+import 'package:timeeditparser_flutter/utilities/orgSearch.dart' as search;
 
 class OrgSearch extends SearchDelegate<String> {
   Timer _debounce;

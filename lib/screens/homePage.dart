@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:timeeditparser_flutter/objects/schedule.dart';
-import 'package:timeeditparser_flutter/pages/settingsPage.dart';
-import 'package:timeeditparser_flutter/util/settings.dart' as settings;
-import 'package:timeeditparser_flutter/util/theming.dart';
+import 'package:timeedit/models/schedule.dart';
+import 'package:timeeditparser_flutter/screens/settingsPage.dart';
+import 'package:timeeditparser_flutter/utilities/settings.dart' as settings;
+import 'package:timeeditparser_flutter/utilities/theming.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({@required this.theming});

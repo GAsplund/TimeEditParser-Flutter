@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:timeeditparser_flutter/objects/week.dart';
+import 'package:timeedit/models/week.dart';
 import 'package:http/http.dart' as http;
 
 import 'booking.dart';

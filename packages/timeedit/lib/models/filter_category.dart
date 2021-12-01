@@ -1,4 +1,4 @@
-import 'filter.dart';
+import 'searchFilter.dart';
 import 'package:html/dom.dart' as dom;
 
 class FilterCategory {
@@ -20,7 +20,7 @@ class FilterCategory {
     // <select class="fancyformfieldsearchselect objectFieldsParam " multiple="" size="14" data-param="fe" data-tefieldkind="CATEGORY" data-name="Period" name="183_22" data-prefix="22" id="ff183_22">
     List<dom.Element> filterSelectionNodes = filterCollectionNode.querySelectorAll("select");
 
-    if (filterSelectionNodes.length == 0) {
+    if (filterSelectionNodes.isEmpty) {
       return filterCategory;
     }
 

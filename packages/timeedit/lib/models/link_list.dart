@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
-import 'package:timeeditparser_flutter/objects/organization.dart';
+import 'package:timeeditparser_flutter/models/organization.dart';
 
 class LinkList extends Organization {
   LinkList({@required String orgName, @required this.entryPath, this.name, this.description}) : super(orgName: orgName);

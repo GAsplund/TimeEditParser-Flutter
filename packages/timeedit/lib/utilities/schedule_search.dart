@@ -1,14 +1,14 @@
-import 'package:timeeditparser_flutter/objects/organization.dart';
+import 'package:timeedit/models/organization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
-import 'package:timeeditparser_flutter/objects/filter.dart';
-import 'package:timeeditparser_flutter/objects/filterCategory.dart';
-import 'package:timeeditparser_flutter/objects/schedule.dart';
+import 'package:timeedit/models/search_filter.dart';
+import 'package:timeedit/models/filter_category.dart';
+import 'package:timeedit/models/schedule.dart';
 
 class ScheduleSearch extends Organization {
-  ScheduleSearch({@required String orgName, @required this.listPath, @required this.schedulePath}) : super(orgName: orgName);
+  ScheduleSearch({required String orgName, required this.listPath, required this.schedulePath}) : super(orgName: orgName);
   String schedulePath;
   String listPath;
 

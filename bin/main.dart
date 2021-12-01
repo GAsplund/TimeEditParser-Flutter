@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:timeeditparser_flutter/pages/mainPage.dart';
-import 'package:timeeditparser_flutter/util/theming.dart';
-import 'package:timeeditparser_flutter/util/settings.dart' as settings;
+import 'package:timeeditparser_flutter/screens/mainPage.dart';
+import 'package:timeeditparser_flutter/utilities/theming.dart';
+import 'package:timeeditparser_flutter/utilities/settings.dart' as settings;
 
 void main() {
   runApp(TimeEditParser());
