@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:timeedit/models/link_list.dart';
 import 'package:timeedit/models/organization.dart';
 import 'package:timeedit/models/schedule.dart';
+import 'package:timeedit/models/date_range.dart';
 import 'package:timeeditparser_flutter/screens/itemSelectPage.dart';
 import 'package:timeeditparser_flutter/screens/orgSearchPage.dart';
 import 'package:timeeditparser_flutter/screens/scheduleColumnsPage.dart';
@@ -41,7 +42,7 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
     currentEntrance ??= (editedSchedule.orgName != null) ? LinkList(entryPath: editedSchedule.entryPath, orgName: editedSchedule.orgName, description: '', name: '') : null;
 
     if (startType == null || endType == null) {
-      switch (editedSchedule.rangeStartType) {
+      switch (editedSchedule.range.rangeStartType) {
         case RelativeUnit.now:
           startType = "now";
           break;
@@ -50,17 +51,17 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
           break;
         default:
           startType = "rel";
-          startRel = relToString(editedSchedule.rangeStartType);
+          startRel = DateRange.relToString(editedSchedule.range.rangeStartType);
           break;
       }
 
-      switch (editedSchedule.rangeEndType) {
+      switch (editedSchedule.range.rangeEndType) {
         case RelativeUnit.setDate:
           endType = "set";
           break;
         default:
           endType = "rel";
-          endRel = relToString(editedSchedule.rangeEndType);
+          endRel = DateRange.relToString(editedSchedule.range.rangeEndType);
           break;
       }
     }
@@ -172,13 +173,13 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                             startType = value;
                             switch (value) {
                               case "now":
-                                editedSchedule.rangeStartType = RelativeUnit.now;
+                                editedSchedule.range.rangeStartType = RelativeUnit.now;
                                 break;
                               case "rel":
-                                editedSchedule.rangeStartType = RelativeUnit.weeks;
+                                editedSchedule.range.rangeStartType = RelativeUnit.weeks;
                                 break;
                               case "set":
-                                editedSchedule.rangeStartType = RelativeUnit.setDate;
+                                editedSchedule.range.rangeStartType = RelativeUnit.setDate;
                                 break;
                             }
                             setState(() {});
@@ -194,9 +195,9 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                               Padding(padding: const EdgeInsets.only(right: 8), child: Text("Starting at")),
                               Flexible(
                                   child: TextField(
-                                      controller: new TextEditingController(text: editedSchedule.relativeStart.toString()),
+                                      controller: new TextEditingController(text: editedSchedule.range.relativeStart.toString()),
                                       onSubmitted: (value) {
-                                        editedSchedule.relativeStart = int.parse(value);
+                                        editedSchedule.range.relativeStart = int.parse(value);
                                       },
                                       keyboardType: TextInputType.number,
                                       inputFormatters: <TextInputFormatter>[
@@ -252,7 +253,7 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                                     ],
                                     onChanged: (String value) {
                                       startRel = value;
-                                      editedSchedule.rangeEndType = stringToRel(value);
+                                      editedSchedule.range.rangeEndType = DateRange.stringToRel(value);
                                       setState(() {});
                                     },
                                   ))
@@ -265,11 +266,11 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                               Padding(padding: const EdgeInsets.only(right: 8), child: Text("Starting at")),
                               Flexible(
                                   child: DateTimePicker(
-                                initialValue: editedSchedule.rangeStart.toString(),
+                                initialValue: editedSchedule.range.rangeStart.toString(),
                                 firstDate: DateTime(2000),
                                 lastDate: DateTime(2100),
                                 dateLabelText: 'Date',
-                                onChanged: (val) => editedSchedule.rangeStart = DateTime.parse(val),
+                                onChanged: (val) => editedSchedule.range.rangeStart = DateTime.parse(val),
                                 validator: (val) {
                                   print(val);
                                   return null;
@@ -317,10 +318,10 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                             endType = value;
                             switch (value) {
                               case "rel":
-                                editedSchedule.rangeEndType = RelativeUnit.weeks;
+                                editedSchedule.range.rangeEndType = RelativeUnit.weeks;
                                 break;
                               case "set":
-                                editedSchedule.rangeEndType = RelativeUnit.setDate;
+                                editedSchedule.range.rangeEndType = RelativeUnit.setDate;
                                 break;
                             }
                             setState(() {});
@@ -336,9 +337,9 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                               Padding(padding: const EdgeInsets.only(right: 8), child: Text("Ending in")),
                               Flexible(
                                   child: TextField(
-                                      controller: new TextEditingController(text: editedSchedule.relativeEnd.toString()),
+                                      controller: new TextEditingController(text: editedSchedule.range.relativeEnd.toString()),
                                       onSubmitted: (value) {
-                                        editedSchedule.relativeEnd = int.parse(value);
+                                        editedSchedule.range.relativeEnd = int.parse(value);
                                       },
                                       keyboardType: TextInputType.number,
                                       inputFormatters: <TextInputFormatter>[
@@ -394,7 +395,7 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                                     ],
                                     onChanged: (String value) {
                                       endRel = value;
-                                      editedSchedule.rangeEndType = stringToRel(value);
+                                      editedSchedule.range.rangeEndType = DateRange.stringToRel(value);
                                       setState(() {});
                                     },
                                   ))
@@ -407,11 +408,11 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                               Padding(padding: const EdgeInsets.only(right: 8), child: Text("Ending at")),
                               Flexible(
                                   child: DateTimePicker(
-                                initialValue: editedSchedule.rangeEnd.toString(),
+                                initialValue: editedSchedule.range.rangeEnd.toString(),
                                 firstDate: DateTime(2000),
                                 lastDate: DateTime(2100),
                                 dateLabelText: 'Date',
-                                onChanged: (val) => editedSchedule.rangeEnd = DateTime.parse(val),
+                                onChanged: (val) => editedSchedule.range.rangeEnd = DateTime.parse(val),
                                 validator: (val) {
                                   print(val);
                                   return null;

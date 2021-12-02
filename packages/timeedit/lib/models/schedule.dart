@@ -1,75 +1,11 @@
 import 'dart:convert';
 
-import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:timeedit/models/date_range.dart';
 import 'package:timeedit/models/week.dart';
 import 'package:http/http.dart' as http;
 
 import 'booking.dart';
-
-String relToString(RelativeUnit unit) {
-  switch (unit) {
-    case RelativeUnit.minutes:
-      return "m";
-      break;
-    case RelativeUnit.hours:
-      return "h";
-      break;
-    case RelativeUnit.days:
-      return "d";
-      break;
-    case RelativeUnit.weeks:
-      return "w";
-      break;
-    case RelativeUnit.months:
-      return "n";
-      break;
-    case RelativeUnit.now:
-      return "now";
-      break;
-    case RelativeUnit.setDate:
-    default: // Default should never happen, but catch it anyway
-      return "set";
-      break;
-  }
-}
-
-RelativeUnit stringToRel(String unit) {
-  switch (unit) {
-    case "m":
-      return RelativeUnit.minutes;
-      break;
-    case "h":
-      return RelativeUnit.hours;
-      break;
-    case "d":
-      return RelativeUnit.days;
-      break;
-    case "w":
-      return RelativeUnit.weeks;
-      break;
-    case "n":
-      return RelativeUnit.months;
-      break;
-    case "now":
-      return RelativeUnit.now;
-      break;
-    case "set":
-    default:
-      return RelativeUnit.setDate;
-      break;
-  }
-}
-
-enum RelativeUnit {
-  now,
-  minutes, // m
-  hours, // h
-  days, // d
-  weeks, // w
-  months, // n
-  setDate // use rangeStart or rangeEnd parameter
-}
 
 class Schedule {
   Schedule({required this.headers, required this.orgName, required this.entryPath, required this.schedulePath});
@@ -83,6 +19,8 @@ class Schedule {
   String entryPath; // Example: "public"
   String schedulePath; // Example: "ri1Q7"
 
+  DateRange range = DateRange();
+
   /*
 
   String orgName; 
@@ -91,100 +29,20 @@ class Schedule {
   
   */
 
-  DateTime rangeStart = DateTime.now();
-  DateTime rangeEnd = Jiffy().add(weeks: 3).dateTime;
-
-  int relativeStart = 0;
-  int relativeEnd = 3;
-
   int nameCatIndex = -1;
   int locCatIndex = -1;
   int tutorCatIndex = -1;
 
-  RelativeUnit rangeStartType = RelativeUnit.weeks;
-  RelativeUnit rangeEndType = RelativeUnit.weeks;
+  Map<String, String> groups = <String, String>{};
 
-  String getDateParam() {
-    String startParam;
-    String endParam;
-
-    startParam = dateParam(rangeStartType, relativeStart, rangeStart);
-    endParam = dateParam(rangeEndType, relativeEnd, rangeEnd);
-
-    return startParam + "," + endParam;
-  }
-
-  String dateParam(RelativeUnit relativeUnit, int relative, DateTime range) {
-    switch (relativeUnit) {
-      case RelativeUnit.minutes:
-        return relative.toString() + ".m";
-      case RelativeUnit.hours:
-        return relative.toString() + ".h";
-      case RelativeUnit.days:
-        return relative.toString() + ".d";
-      case RelativeUnit.weeks:
-        return relative.toString() + ".w";
-      case RelativeUnit.months:
-        return relative.toString() + ".n";
-      case RelativeUnit.setDate:
-        return DateFormat('yyyyMMdd').format(rangeStart) + ".x";
-      case RelativeUnit.now:
-      default:
-        return "0.w";
-    }
-  }
-
-  DateTime getStartDate() {
-    switch (rangeStartType) {
-      case RelativeUnit.now:
-        return DateTime.now();
-      case RelativeUnit.minutes:
-        return Jiffy(DateTime.now()).add(minutes: relativeStart).dateTime;
-      case RelativeUnit.hours:
-        return Jiffy(DateTime.now()).add(hours: relativeStart).dateTime;
-      case RelativeUnit.days:
-        return Jiffy(DateTime.now()).add(days: relativeStart).dateTime;
-      case RelativeUnit.weeks:
-        return Jiffy(DateTime.now()).add(weeks: relativeStart).dateTime;
-      case RelativeUnit.months:
-        return Jiffy(DateTime.now()).add(months: relativeStart).dateTime;
-      case RelativeUnit.setDate:
-        return rangeStart;
-    }
-    return DateTime.now();
-  }
-
-  DateTime getEndDate() {
-    switch (rangeEndType) {
-      case RelativeUnit.now:
-        return DateTime.now();
-      case RelativeUnit.minutes:
-        return Jiffy(DateTime.now()).add(minutes: relativeEnd).dateTime;
-      case RelativeUnit.hours:
-        return Jiffy(DateTime.now()).add(hours: relativeEnd).dateTime;
-      case RelativeUnit.days:
-        return Jiffy(DateTime.now()).add(days: relativeEnd).dateTime;
-      case RelativeUnit.weeks:
-        return Jiffy(DateTime.now()).add(weeks: relativeEnd).dateTime;
-      case RelativeUnit.months:
-        return Jiffy(DateTime.now()).add(months: relativeEnd).dateTime;
-      case RelativeUnit.setDate:
-        return rangeEnd;
-      default:
-        return Jiffy(DateTime.now()).add(weeks: 3).dateTime;
-    }
-  }
-
-  Map<String, String> groups = new Map<String, String>();
-
-  Map<int, List<String>> headerFilters = new Map<int, List<String>>();
+  Map<int, List<String>> headerFilters = <int, List<String>>{};
   List<int> idFilters = [];
 
   String _link(bool useJson, bool addFilters) {
     // Where does sid=3 come from?
     // It's stored in links-database. This link is fetched elsewhere. Maybe get
     // there?
-    String params = addFilters ? "?p=${getDateParam()}&objects=${groups.keys.join(",-1,")}&sid=3" : "";
+    String params = addFilters ? "?p=${range.getDateParam()}&objects=${groups.keys.join(",-1,")}&sid=3" : "";
     return "$linkbase$orgName/web/$entryPath/$schedulePath${useJson ? ".json" : ".html"}$params";
   }
 
@@ -219,8 +77,8 @@ class Schedule {
     // More info gathered: The JSON gives different data than website
 
     List<Week> weeks = [];
-    DateTime end = getEndDate();
-    DateTime start = getStartDate();
+    DateTime end = range.getEndDate();
+    DateTime start = range.getStartDate();
 
     int weeksAmount = Jiffy(end).week - Jiffy(start).week;
     for (int w = 0; w <= weeksAmount; w++) {
@@ -268,14 +126,14 @@ class Schedule {
   factory Schedule.fromSettingsJson(Map<String, dynamic> json) {
     // TODO: Check if more data needs to be read
     List<String> fromHeaders = List.castFrom<dynamic, String>(json["headers"]);
-    Map<String, String> fromGroups = new Map<String, String>.from(json["groups"]);
+    Map<String, String> fromGroups = Map<String, String>.from(json["groups"]);
 
     String entryPath = "";
     String orgName = "";
     String schedulePath = "";
     if (json.containsKey("path")) {
       orgName = json['entry']['orgName'];
-      String entryPath = json['entry']['entryPath'];
+      entryPath = json['entry']['entryPath'];
       schedulePath = json['entry']['schedulePath'];
     }
 
@@ -283,14 +141,8 @@ class Schedule {
 
     schedule.groups = fromGroups;
     schedule.userCustomName = json['customName'];
-
     if (json.containsKey("range")) {
-      schedule.rangeStartType = RelativeUnit.values[json['range']['startType']];
-      schedule.rangeEndType = RelativeUnit.values[json['range']['endType']];
-      schedule.rangeStart = DateTime.fromMicrosecondsSinceEpoch(json['range']['startDate']);
-      schedule.rangeEnd = DateTime.fromMicrosecondsSinceEpoch(json['range']['endDate']);
-      schedule.relativeStart = json['range']['relativeStart'];
-      schedule.relativeEnd = json['range']['relativeEnd'];
+      schedule.range = DateRange.fromSettingsJson(json['range']);
     }
 
     if (json.containsKey("catIndices")) {
@@ -313,14 +165,7 @@ class Schedule {
         'loc': locCatIndex,
         'tutor': tutorCatIndex
       },
-      'range': {
-        'startType': rangeStartType.index,
-        'endType': rangeEndType.index,
-        'startDate': rangeStart.millisecondsSinceEpoch,
-        'endDate': rangeEnd.millisecondsSinceEpoch,
-        'relativeStart': relativeStart,
-        'relativeEnd': relativeEnd
-      },
+      'range': range.toSettingsJson(),
       'path': {
         'orgName': orgName,
         'entryPath': entryPath,
