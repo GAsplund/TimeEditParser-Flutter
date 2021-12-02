@@ -16,7 +16,7 @@ class Organization {
   }
 
   Future<List<LinkList>> getEntrances() async {
-    http.Response response = await http.get(Uri(path: "$linkbase$orgName/web/"));
+    http.Response response = await http.get(Uri.parse("$linkbase$orgName/web/"));
     dom.Document document = parser.parse(response.body);
 
     // Get the DOM objects for the entrance links

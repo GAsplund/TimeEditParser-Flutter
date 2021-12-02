@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:timeedit/models/schedule.dart';
 
 class ScheduleFiltersPage extends StatefulWidget {
-  ScheduleFiltersPage({this.editedSchedule, Schedule schedule});
+  ScheduleFiltersPage({@required this.editedSchedule});
 
   final Schedule editedSchedule;
 
@@ -11,12 +11,11 @@ class ScheduleFiltersPage extends StatefulWidget {
 }
 
 class _ScheduleFiltersPageState extends State<ScheduleFiltersPage> {
-  _ScheduleFiltersPageState({this.editedSchedule});
+  _ScheduleFiltersPageState({@required this.editedSchedule});
   Schedule editedSchedule;
 
   @override
   Widget build(BuildContext context) {
-    editedSchedule ??= new Schedule();
     List<Widget> filterItems = [];
 
     for (int i = 0; i < 10; i++) {

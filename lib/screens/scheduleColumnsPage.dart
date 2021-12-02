@@ -3,7 +3,7 @@ import 'package:timeedit/models/schedule.dart';
 import 'package:timeeditparser_flutter/widgets/scheduleItem.dart';
 
 class ScheduleColumnsPage extends StatefulWidget {
-  ScheduleColumnsPage({this.editedSchedule, Schedule schedule});
+  ScheduleColumnsPage({@required this.editedSchedule});
 
   final Schedule editedSchedule;
 
@@ -12,12 +12,11 @@ class ScheduleColumnsPage extends StatefulWidget {
 }
 
 class _ScheduleColumnsPageState extends State<ScheduleColumnsPage> {
-  _ScheduleColumnsPageState({this.editedSchedule});
+  _ScheduleColumnsPageState({@required this.editedSchedule});
   Schedule editedSchedule;
 
   @override
   Widget build(BuildContext context) {
-    editedSchedule ??= new Schedule();
     List<int> indices = editedSchedule.headers.asMap().keys.toList();
 
     String getHeaderValidIndex(int index) {

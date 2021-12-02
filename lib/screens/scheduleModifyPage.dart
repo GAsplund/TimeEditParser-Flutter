@@ -36,7 +36,7 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
   String endRel;
   @override
   Widget build(BuildContext context) {
-    editedSchedule ??= new Schedule();
+    //editedSchedule ??= new Schedule();
     currentOrg ??= (editedSchedule.orgName != null) ? Organization(orgName: editedSchedule.orgName) : null;
     currentEntrance ??= (editedSchedule.orgName != null) ? LinkList(entryPath: editedSchedule.entryPath, orgName: editedSchedule.orgName, description: '', name: '') : null;
 
@@ -441,7 +441,7 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
               appBar: AppBar(
                 title: Text("Search Objects"),
               ),
-              body: ScheduleSearchPage(schedule: editedSchedule ?? new Schedule()))),
+              body: ScheduleSearchPage(schedule: editedSchedule))),
     );
 
     editedSchedule = (result is Schedule) ? result : editedSchedule;
@@ -455,7 +455,7 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
               appBar: AppBar(
                 title: Text("Schedule Columns"),
               ),
-              body: ScheduleColumnsPage(editedSchedule: editedSchedule ?? new Schedule()))),
+              body: ScheduleColumnsPage(editedSchedule: editedSchedule))),
     );
 
     editedSchedule = (result is Schedule) ? result : editedSchedule;
@@ -469,7 +469,7 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
               appBar: AppBar(
                 title: Text("Schedule Filters"),
               ),
-              body: ScheduleColumnsPage(editedSchedule: editedSchedule ?? new Schedule()))),
+              body: ScheduleColumnsPage(editedSchedule: editedSchedule))),
     );
 
     editedSchedule = (result is Schedule) ? result : editedSchedule;

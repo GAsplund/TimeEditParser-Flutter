@@ -193,13 +193,13 @@ class Schedule {
 
   // Gets the column headers used for the schedule
   Future<List<String>> getHeaders() async {
-    http.Response response = await http.get(Uri(path: _link(true, false)));
+    http.Response response = await http.get(Uri.parse(_link(true, false)));
     return List.castFrom<dynamic, String>(json.decode(response.body)["columnheaders"]);
   }
 
   // Gets a list of all bookings from the search parameters
   Future<List<Booking>> getBookings() async {
-    http.Response response = await http.get(Uri(path: linkJson()));
+    http.Response response = await http.get(Uri.parse(linkJson()));
     Map<String, dynamic> scheduleJson = json.decode(response.body);
 
     // TODO: Figure out why the last week doesn't show any bookings

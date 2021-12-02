@@ -76,7 +76,7 @@ class _ScheduleListPageState extends State<ScheduleListPage> {
                 title: Text("Modify Schedule"),
               ),
               body: ScheduleModifyPage(
-                editedSchedule: schedule ?? new Schedule(),
+                editedSchedule: schedule,
                 newSchedule: false,
               ))),
     );
@@ -93,7 +93,7 @@ class _ScheduleListPageState extends State<ScheduleListPage> {
                 title: Text("Modify Schedule"),
               ),
               body: ScheduleModifyPage(
-                editedSchedule: schedule ?? new Schedule(),
+                editedSchedule: schedule,
                 newSchedule: false,
               ))),
     );

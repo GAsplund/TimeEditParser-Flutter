@@ -10,7 +10,7 @@ class LinkList extends Organization {
   String entryPath;
 
   Future<List<List<String>>> getLinks() async {
-    http.Response response = await http.get(Uri(path: "$linkbase$orgName/web/$entryPath"));
+    http.Response response = await http.get(Uri.parse("$linkbase$orgName/web/$entryPath"));
     dom.Document document = parser.parse(response.body);
 
     // Get the DOM objects for the link entries

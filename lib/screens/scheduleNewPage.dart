@@ -19,7 +19,7 @@ class _ScheduleNewPageState extends State<ScheduleNewPage> {
   String orgName = "";
   @override
   Widget build(BuildContext context) {
-    editedSchedule ??= new Schedule();
+    //editedSchedule ??= new Schedule();
 
     return WillPopScope(
         onWillPop: () {

@@ -22,7 +22,7 @@ class ScheduleSearch extends Organization {
     // Make sure that link is valid
     if (!Uri.parse(getLink()).isAbsolute) return [];
 
-    http.Response response = await http.get(Uri(path: getLink()));
+    http.Response response = await http.get(Uri.parse(getLink()));
     dom.Document document = parser.parse(response.body);
 
     List<FilterCategory> filterCategories = [];
@@ -46,7 +46,7 @@ class ScheduleSearch extends Organization {
     if (!useCache /*|| !Application.Current.Properties.ContainsKey("groupsCache")*/) {
       Map<String, String> groups = new Map<String, String>();
 
-      http.Response response = await http.get(Uri(path: linkbase + orgName + "/web/$listPath/objects.html?fr=t&partajax=t&im=f" + filters));
+      http.Response response = await http.get(Uri.parse(linkbase + orgName + "/web/$listPath/objects.html?fr=t&partajax=t&im=f" + filters));
       dom.Document document = parser.parse(response.body);
 
       // Select divs with classes clickable2 and searchObject
