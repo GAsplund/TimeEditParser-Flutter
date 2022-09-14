@@ -25,7 +25,7 @@ class _SubMenuButtonState extends State<SubMenuButton> {
         padding: const EdgeInsets.only(bottom: 8, left: 12, right: 12),
         child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).dialogBackgroundColor,
               padding: const EdgeInsets.all(0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -33,6 +33,11 @@ class _SubMenuButtonState extends State<SubMenuButton> {
               elevation: 2,
             ),
             onPressed: _disabled ? null : onPressed,
-            child: ListTile(title: _title, trailing: Icon(Icons.arrow_forward))));
+            child: ListTile(
+                title: _title,
+                trailing: Icon(
+                  Icons.arrow_forward,
+                  color: Theme.of(context).textTheme.bodyLarge.color,
+                ))));
   }
 }
