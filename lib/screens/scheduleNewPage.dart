@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:timeedit/models/schedule.dart';
+import 'package:timeeditparser_flutter/utilities/orgSearch.dart';
+
+import 'orgSearchPage.dart';
 
 class ScheduleNewPage extends StatefulWidget {
   ScheduleNewPage({@required this.newSchedule, this.editedSchedule});
@@ -17,6 +20,8 @@ class _ScheduleNewPageState extends State<ScheduleNewPage> {
   bool scheduleValid = false;
   Schedule editedSchedule;
   String orgName = "";
+
+  String orgId = "";
   @override
   Widget build(BuildContext context) {
     //editedSchedule ??= new Schedule();
@@ -37,12 +42,7 @@ class _ScheduleNewPageState extends State<ScheduleNewPage> {
                     ),
                     elevation: 4,
                     child: InkWell(
-                      onTap: () => showBottomSheet(
-                          context: context,
-                          builder: (context) {
-                            return new Text("Placeholder");
-                            //return new OrgSearchPage();
-                          }),
+                      onTap: () => _searchOrg(context),
                       child: Padding(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,5 +63,15 @@ class _ScheduleNewPageState extends State<ScheduleNewPage> {
                     )))
           ],
         )));
+  }
+
+  Future _searchOrg(BuildContext context) async {
+    final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => OrgSearchPage()));
+    if (result is OrgSearchResult) {
+      orgId = result.id;
+      setState(() {
+        orgName = result.label;
+      });
+    }
   }
 }

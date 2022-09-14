@@ -4,6 +4,74 @@ import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:timeeditparser_flutter/utilities/orgSearch.dart' as search;
 
+class _OrgSearchPageState extends State<OrgSearchPage> {
+  final _debouncer = Debouncer<String>(Duration(milliseconds: 500), initialValue: "");
+  List<search.OrgSearchResult> searchResults = [];
+  String searchQuery = "";
+  bool searching = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Search for organization"),
+        ),
+        body: Column(
+          children: [
+            TextField(
+              decoration: InputDecoration(hintText: "Enter organization name..."),
+              onChanged: (value) {
+                searchQuery = value;
+                _search();
+              },
+            ),
+            Expanded(
+                child: ListView.builder(
+                    itemCount: searchResults.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                          elevation: 4,
+                          child: InkWell(
+                            onTap: () => _selectOrg(context, searchResults[index]),
+                            child: Padding(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(searchResults[index].label),
+                                    Text(searchResults[index].id, style: Theme.of(context).textTheme.caption)
+                                  ],
+                                ),
+                                padding: const EdgeInsets.only(left: 12, top: 12, bottom: 12)),
+                          ));
+                    }))
+          ],
+        ));
+  }
+
+  _search() async {
+    setState(() {
+      searching = true;
+    });
+    _debouncer.value = searchQuery;
+    searchResults = await search.searchOrg(await _debouncer.nextValue);
+    setState(() {
+      searching = false;
+    });
+  }
+
+  _selectOrg(BuildContext context, search.OrgSearchResult org) {
+    Navigator.pop(context, org);
+  }
+}
+
+class OrgSearchPage extends StatefulWidget {
+  OrgSearchPage();
+
+  @override
+  _OrgSearchPageState createState() => _OrgSearchPageState();
+}
+
+// ORG SEARCH STUFF
 class OrgSearch extends SearchDelegate<String> {
   Timer _debounce;
 
@@ -29,7 +97,7 @@ class OrgSearch extends SearchDelegate<String> {
       );
 
   @override
-  Widget buildSuggestions(BuildContext context) => FutureBuilder<List<Map<String, String>>>(
+  Widget buildSuggestions(BuildContext context) => FutureBuilder<List<search.OrgSearchResult>>(
         future: _onSearchChanged(query),
         builder: (context, snapshot) {
           if (query.isEmpty) return buildNoSuggestions();
@@ -54,22 +122,22 @@ class OrgSearch extends SearchDelegate<String> {
         ),
       );
 
-  Widget buildSuggestionsSuccess(List<Map<String, String>> suggestions) => ListView.builder(
+  Widget buildSuggestionsSuccess(List<search.OrgSearchResult> suggestions) => ListView.builder(
         itemCount: suggestions.length,
         itemBuilder: (context, index) {
           final suggestion = suggestions[index];
-          final queryText = suggestion["label"].substring(0, query.length);
-          final remainingText = suggestion["label"].substring(query.length);
+          final queryText = suggestion.label.substring(0, query.length);
+          final remainingText = suggestion.label.substring(query.length);
 
           return ListTile(
             onTap: () {
-              query = suggestion["id"];
+              query = suggestion.id;
 
               // 1. Show Results
               //showResults(context);
 
               // 2. Close Search & Return Result
-              close(context, suggestion["id"]);
+              close(context, suggestion.id);
 
               // 3. Navigate to Result Page
               //  Navigator.push(
@@ -110,7 +178,7 @@ class OrgSearch extends SearchDelegate<String> {
 
   final debouncer = Debouncer<String>(Duration(milliseconds: 500), initialValue: "");
 
-  Future<List<Map<String, String>>> _onSearchChanged(String query) async {
+  Future<List<search.OrgSearchResult>> _onSearchChanged(String query) async {
     debouncer.value = query;
     return await search.searchOrg(await debouncer.nextValue);
   }
