@@ -26,6 +26,14 @@ class _ScheduleListPageState extends State<ScheduleListPage> {
             onTap: () => _modifySchedule(context, schedules[i], i),
             child: Padding(child: Text(schedules[i].userCustomName, style: Theme.of(context).textTheme.headline6), padding: const EdgeInsets.only(left: 12, top: 12, bottom: 12)),
           )));
+      scheduleItems.add(new ElevatedButton(
+          onPressed: () {
+            settings.currentSchedule = schedules[i];
+            setState(() {
+              currentSchedule = settings.currentSchedule;
+            });
+          },
+          child: Text("Set as main")));
     }
     return Scaffold(
       appBar: AppBar(
