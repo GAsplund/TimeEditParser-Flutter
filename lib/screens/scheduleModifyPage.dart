@@ -7,9 +7,13 @@ import 'package:timeedit/models/schedule.dart';
 import 'package:timeedit/models/date_range.dart';
 import 'package:timeeditparser_flutter/screens/itemSelectPage.dart';
 import 'package:timeeditparser_flutter/screens/orgSearchPage.dart';
+import 'package:timeeditparser_flutter/screens/pathSelectionPage.dart';
 import 'package:timeeditparser_flutter/screens/scheduleColumnsPage.dart';
 import 'package:timeeditparser_flutter/screens/scheduleSearchPage.dart';
 import 'package:timeeditparser_flutter/widgets/subMenuButton.dart';
+
+import '../models/entryPathSelector.dart';
+import '../models/schedulePathSelector.dart';
 
 enum RangeType {
   datetime,
@@ -488,19 +492,14 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
   }
 
   _editEntry(BuildContext context) async {
-    List<LinkList> entrances = await currentOrg?.getEntrances();
     final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => ItemSelectPage(items: [
-                for (LinkList entrance in entrances)
-                  [
-                    entrance.name,
-                    entrance.description,
-                    entrance.entryPath
-                  ]
-              ])),
-    );
+        context,
+        MaterialPageRoute(
+            builder: (context) => PathSelectionPage(
+                  selector: new EntryPathSelector(pathPrefix: [
+                    editedSchedule.orgName
+                  ]),
+                )));
     if (result != null && result.isNotEmpty && result != editedSchedule.entryPath)
       setState(() {
         editedSchedule.entryPath = result;
@@ -512,11 +511,15 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
   }
 
   _editSchedulePath(BuildContext context) async {
-    List<List<String>> links = await currentEntrance.getLinks();
     final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ItemSelectPage(items: links)),
-    );
+        context,
+        MaterialPageRoute(
+            builder: (context) => PathSelectionPage(
+                  selector: new SchedulePathSelector(pathPrefix: [
+                    editedSchedule.orgName,
+                    editedSchedule.entryPath
+                  ]),
+                )));
     if (result != null && result.isNotEmpty && result != editedSchedule.schedulePath)
       setState(() {
         editedSchedule.schedulePath = result;

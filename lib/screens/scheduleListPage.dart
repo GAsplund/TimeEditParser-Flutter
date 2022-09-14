@@ -53,12 +53,7 @@ class _ScheduleListPageState extends State<ScheduleListPage> {
   _addSchedule(BuildContext context) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => Scaffold(
-              appBar: AppBar(
-                title: Text("Add Schedule"),
-              ),
-              body: ScheduleNewPage(newSchedule: true))),
+      MaterialPageRoute(builder: (context) => ScheduleNewPage(newSchedule: true)),
     );
 
     if (result is Schedule) {
