@@ -40,6 +40,7 @@ class _ScheduleNewPageState extends State<ScheduleNewPage> {
                       onTap: () => showBottomSheet(
                           context: context,
                           builder: (context) {
+                            return new Text("Placeholder");
                             //return new OrgSearchPage();
                           }),
                       child: Padding(

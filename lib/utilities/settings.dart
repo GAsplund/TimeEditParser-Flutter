@@ -22,6 +22,7 @@ Future<void> getSettings() async {
 List<Schedule> _schedules;
 
 List<Schedule> get schedules {
+  if (_schedules == null) return [];
   return _schedules;
 }
 
@@ -39,6 +40,9 @@ Schedule _currentSchedule;
 //int _currentScheduleIndex;
 
 Schedule get currentSchedule {
+  /*if (_currentSchedule == null) {
+    _currentSchedule = new Schedule(headers: [], orgName: "timeedit_sso_test", entryPath: "publik", schedulePath: "ri1Q7");
+  }*/
   return _currentSchedule;
 }
 

@@ -1,12 +1,14 @@
 import 'search_filter.dart';
 import 'package:html/dom.dart' as dom;
 
+/// Represents a filter for a category that can be entered in search.
 class FilterCategory {
   FilterCategory(this.name, this.value);
   String name;
   String value;
   List<SearchFilter> filters = [];
 
+  /// Instantiates a new [FilterCategory] from a DOM element.
   factory FilterCategory.fromDomElement(dom.Element domElement, dom.Element filtersLists) {
     // Example match: <option value="183" selected="">Klass</option>
     FilterCategory filterCategory = FilterCategory(domElement.text, domElement.attributes["value"] ?? "");
@@ -22,8 +24,8 @@ class FilterCategory {
       return filterCategory;
     }
 
-    for (dom.Element filterSelectionNode in filterSelectionNodes) {
-      filterCategory.filters.add(SearchFilter.fromDomElement(filterSelectionNode));
+    for (dom.Element node in filterSelectionNodes) {
+      filterCategory.filters.add(SearchFilter.fromDomElement(node));
     }
     return filterCategory;
   }

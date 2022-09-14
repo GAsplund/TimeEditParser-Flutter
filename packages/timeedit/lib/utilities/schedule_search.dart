@@ -1,5 +1,4 @@
 import 'package:timeedit/models/organization.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
@@ -44,14 +43,14 @@ class ScheduleSearch extends Organization {
   Future<Map<String, String>> getGroups(String filters, bool useCache /* = true*/) async {
     // Initiate variables
     if (!useCache /*|| !Application.Current.Properties.ContainsKey("groupsCache")*/) {
-      Map<String, String> groups = new Map<String, String>();
+      Map<String, String> groups = <String, String>{};
 
       http.Response response = await http.get(Uri.parse(linkbase + orgName + "/web/$listPath/objects.html?fr=t&partajax=t&im=f" + filters));
       dom.Document document = parser.parse(response.body);
 
       // Select divs with classes clickable2 and searchObject
       List<dom.Element> groupElements = document.querySelectorAll(".clickable2.searchObject");
-      if (groupElements.length == 0) return new Map<String, String>();
+      if (groupElements.isEmpty) return <String, String>{};
 
       for (dom.Element groupElement in groupElements) {
         groups[groupElement.attributes["data-name"] ?? ""] = groupElement.attributes["data-id"] ?? "";
@@ -62,7 +61,7 @@ class ScheduleSearch extends Organization {
       // Return cache for groups
       // TODO: Pull from cache
       // return Application.Current.Properties["groupsCache"];
-      return new Map<String, String>();
+      return <String, String>{};
     }
   }
 
@@ -71,12 +70,12 @@ class ScheduleSearch extends Organization {
     //String link = "https://cloud.timeedit.net/chalmers/web/public/" /*ApplicationSettings.LinkBase*/ + "objects.html?" + "fr=t&partajax=t&im=f&sid=3&l=sv_SE";
     String filtersText = "&types=" + items.value;
 
-    filters.forEach((filter) {
+    for (SearchFilter filter in filters) {
       filtersText += "&" + filter.dataParam + "=" + filter.dataPrefix + ".";
       filter.options.forEach((key, value) {
         filtersText += value + ",";
       });
-    });
+    }
 
     return getGroups(filtersText, false);
   }

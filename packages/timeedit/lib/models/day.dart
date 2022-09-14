@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'booking.dart';
 
+/// Represents one day in a TimeEdit schedule.
 class Day extends ListBase<Booking> {
   DateTime day;
   Day(this.day);
@@ -15,7 +16,11 @@ class Day extends ListBase<Booking> {
 
   @override
   int get length => l.length;
+
+  @override
   Booking operator [](int index) => l[index];
+
+  @override
   void operator []=(int index, Booking value) {
     l[index] = value;
   }

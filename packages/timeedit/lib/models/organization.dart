@@ -28,12 +28,12 @@ class Organization {
     for (dom.Element entry in entries) {
       // Check if the entry is protected. Do not add to results.
       // (No support for authentication)
-      if (entry.getElementsByTagName(".lock").length > 0)
+      if (entry.getElementsByTagName(".lock").isNotEmpty) {
         continue;
-      else {
+      } else {
         String description = entry.getElementsByClassName("text").first.text;
         String entrancePath = entry.attributes["href"]!.substring(orgName.length + 6, entry.attributes["href"]!.length - 1);
-        entrances.add(LinkList(name: entry.text, description: description, entryPath: entrancePath, orgName: this.orgName));
+        entrances.add(LinkList(name: entry.text, description: description, entryPath: entrancePath, orgName: orgName));
       }
     }
     return entrances;

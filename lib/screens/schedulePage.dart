@@ -22,28 +22,30 @@ class _SchedulePageState extends State<SchedulePage> {
         //backgroundColor: Color.fromARGB(255, 230, 230, 230),
         appBar: AppBar(title: Text("Schedule")),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: (_validScheduleSettings())
-            ? FutureBuilder(
-                future: getScheduleWidgets(schedule),
-                builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (BuildContext bContext, int index) {
-                        return snapshot.data[index];
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return _buildScheduleError(false);
-                  } else {
-                    return Center(
-                        child: Container(
-                      child: CircularProgressIndicator(),
-                      alignment: AlignmentDirectional(0.0, 0.0),
-                    ));
-                  }
-                })
-            : _buildScheduleError(true),
+        body: (schedule == null)
+            ? _buildNoSchedule()
+            : ((_validScheduleSettings())
+                ? FutureBuilder(
+                    future: getScheduleWidgets(schedule),
+                    builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
+                      if (snapshot.hasData) {
+                        return ListView.builder(
+                          itemCount: snapshot.data.length,
+                          itemBuilder: (BuildContext bContext, int index) {
+                            return snapshot.data[index];
+                          },
+                        );
+                      } else if (snapshot.hasError) {
+                        return _buildScheduleError(false);
+                      } else {
+                        return Center(
+                            child: Container(
+                          child: CircularProgressIndicator(),
+                          alignment: AlignmentDirectional(0.0, 0.0),
+                        ));
+                      }
+                    })
+                : _buildScheduleError(true)),
         floatingActionButton: SpeedDial(animatedIcon: AnimatedIcons.menu_close, animatedIconTheme: IconThemeData(size: 22.0), child: Icon(Icons.calendar_today), children: [
           SpeedDialChild(child: Icon(Icons.refresh), backgroundColor: Colors.red, label: 'Refresh', labelStyle: TextStyle(fontSize: 18.0), onTap: () => setState(() {})),
           SpeedDialChild(
@@ -69,7 +71,22 @@ class _SchedulePageState extends State<SchedulePage> {
 
   bool _validScheduleSettings() {
     // Perform a basic check if the properties of the schedule are correctly set
+    if (schedule == null) {
+      return false;
+    }
     return schedule.orgName != null && schedule.entryPath != null && schedule.schedulePath != null && schedule.groups.isNotEmpty;
+  }
+
+  Widget _buildNoSchedule() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("No schedule selected", style: Theme.of(context).textTheme.headline4),
+          Text("Please select a schedule to view it here.")
+        ],
+      ),
+    );
   }
 
   Widget _buildScheduleError(bool invalidSettings) {

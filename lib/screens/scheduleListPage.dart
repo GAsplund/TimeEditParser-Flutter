@@ -40,8 +40,8 @@ class _ScheduleListPageState extends State<ScheduleListPage> {
           Card(
               elevation: 4,
               child: InkWell(
-                onTap: () => _modifyCurrentSchedule(context, settings.currentSchedule),
-                child: Padding(child: Text(currentSchedule.userCustomName, style: Theme.of(context).textTheme.headline6), padding: const EdgeInsets.only(left: 12, top: 12, bottom: 12)),
+                onTap: () => (currentSchedule == null) ? null : _modifyCurrentSchedule(context, settings.currentSchedule),
+                child: Padding(child: Text((currentSchedule == null) ? "No schedule" : currentSchedule.userCustomName, style: Theme.of(context).textTheme.headline6), padding: const EdgeInsets.only(left: 12, top: 12, bottom: 12)),
               )),
           Text("Other Schedules"),
           ...scheduleItems

@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 import 'booking.dart';
 
+/// Represents a TimeEdit schedule.
 class Schedule {
   Schedule({required this.headers, required this.orgName, required this.entryPath, required this.schedulePath});
   List<String> headers;
@@ -49,13 +50,13 @@ class Schedule {
   String link() => _link(false, true);
   String linkJson() => _link(true, true);
 
-  // Gets the column headers used for the schedule
+  /// Gets the column headers used for the schedule.
   Future<List<String>> getHeaders() async {
     http.Response response = await http.get(Uri.parse(_link(true, false)));
     return List.castFrom<dynamic, String>(json.decode(response.body)["columnheaders"]);
   }
 
-  // Gets a list of all bookings from the search parameters
+  /// Gets a list of all bookings from the search parameters.
   Future<List<Booking>> getBookings() async {
     http.Response response = await http.get(Uri.parse(linkJson()));
     Map<String, dynamic> scheduleJson = json.decode(response.body);
@@ -71,7 +72,7 @@ class Schedule {
     return bookings;
   }
 
-  // Gets a list of all weeks with bookings from the search parameters
+  /// Gets a list of all weeks with bookings from the search parameters.
   Future<List<Week>> getWeeks() async {
     // TODO: Figure out why the last week doesn't show any bookings
     // More info gathered: The JSON gives different data than website

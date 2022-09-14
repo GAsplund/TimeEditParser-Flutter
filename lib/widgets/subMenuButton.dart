@@ -25,7 +25,7 @@ class _SubMenuButtonState extends State<SubMenuButton> {
         padding: const EdgeInsets.only(bottom: 8, left: 12, right: 12),
         child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              primary: Colors.white,
+              backgroundColor: Colors.white,
               padding: const EdgeInsets.all(0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(5)),

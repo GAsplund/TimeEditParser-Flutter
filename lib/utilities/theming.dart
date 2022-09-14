@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Theming with ChangeNotifier {
-  //static Theming instance = new Theming();
-
   ThemeMode _currentTheme = ThemeMode.system;
 
   ThemeMode getCurrentTheme() {

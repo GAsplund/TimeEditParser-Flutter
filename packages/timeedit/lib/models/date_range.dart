@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
@@ -14,6 +13,7 @@ enum RelativeUnit {
   setDate // use rangeStart or rangeEnd parameter
 }
 
+/// Represents a start and end for a schedule in a TimeEdit schedule.
 class DateRange {
   DateRange();
 
@@ -23,6 +23,7 @@ class DateRange {
   RelativeUnit rangeStartType = RelativeUnit.weeks;
   RelativeUnit rangeEndType = RelativeUnit.weeks;
 
+  /// Gets the parameter representing the date range used for a TimeEdit link.
   String getDateParam() {
     String startParam;
     String endParam;
@@ -56,6 +57,7 @@ class DateRange {
     }
   }
 
+  /// Gets the start of the range.
   DateTime getStartDate() {
     switch (rangeStartType) {
       case RelativeUnit.minutes:
@@ -76,6 +78,7 @@ class DateRange {
     }
   }
 
+  /// Gets the end of the range.
   DateTime getEndDate() {
     switch (rangeEndType) {
       case RelativeUnit.now:
@@ -97,6 +100,7 @@ class DateRange {
     }
   }
 
+  /// Converts a [RelativeUnit] to string used in the date parameter.
   static String relToString(RelativeUnit unit) {
     switch (unit) {
       case RelativeUnit.minutes:
@@ -117,6 +121,10 @@ class DateRange {
     }
   }
 
+  /// Converts the string representation of a [RelativeUnit] into one.
+  ///
+  /// If no valid string representation is given,
+  /// [RelativeUnit.setDate] will be returned.
   static RelativeUnit stringToRel(String unit) {
     switch (unit) {
       case "m":
@@ -137,6 +145,9 @@ class DateRange {
     }
   }
 
+  /// Instantiates a new [DateRange] from a JSON object.
+  ///
+  /// Throws an exception if parameters are missing.
   factory DateRange.fromSettingsJson(Map<String, dynamic> json) {
     DateRange range = DateRange();
 
@@ -150,6 +161,7 @@ class DateRange {
     return range;
   }
 
+  /// Converts the instance into a JSON object.
   String toSettingsJson() {
     return json.encode({
       'startType': rangeStartType.index,

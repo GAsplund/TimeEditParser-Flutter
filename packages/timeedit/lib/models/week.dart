@@ -5,6 +5,7 @@ import 'package:jiffy/jiffy.dart';
 
 import 'day.dart';
 
+/// Represents one week in a TimeEdit schedule.
 class Week extends ListBase<Day> {
   final List<Day> l = [];
   Week(DateTime weekStart) {
@@ -29,6 +30,7 @@ class Week extends ListBase<Day> {
     l[index] = value;
   }
 
+  /// Gets the number of weeks that have passed this year
   int weeknum() {
     DateTime date = l.first.day;
     int dayOfYear = int.parse(DateFormat("D").format(date));
