@@ -46,7 +46,8 @@ Future<void> notifySchedulePlatform(List<Week> weeks) async {
       }
     });
   });
-  await platform.invokeMethod('setNotifSchedule', scheduleItems);
+  // TODO: Fix proper platform invocation
+  //await platform.invokeMethod('setNotifSchedule', scheduleItems);
 }
 
 Future<List<Widget>> weeksToScheduleItems(List<Week> weeks, int nameIndex, int locationIndex, int tutorIndex) async {
