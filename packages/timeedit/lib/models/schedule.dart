@@ -9,7 +9,9 @@ import 'booking.dart';
 
 /// Represents a TimeEdit schedule.
 class Schedule {
-  Schedule({required this.headers, required this.orgName, required this.entryPath, required this.schedulePath});
+  Schedule({required this.headers, required this.orgName, required this.entryPath, required this.schedulePath}) {
+    getHeaders();
+  }
   List<String> headers;
 
   String userCustomName = "Unnamed Schedule";
@@ -53,7 +55,9 @@ class Schedule {
   /// Gets the column headers used for the schedule.
   Future<List<String>> getHeaders() async {
     http.Response response = await http.get(Uri.parse(_link(true, false)));
-    return List.castFrom<dynamic, String>(json.decode(response.body)["columnheaders"]);
+    List<String> headers = List.castFrom<dynamic, String>(json.decode(response.body)["columnheaders"]);
+    this.headers = headers;
+    return headers;
   }
 
   /// Gets a list of all bookings from the search parameters.
@@ -83,7 +87,8 @@ class Schedule {
 
     int weeksAmount = Jiffy(end).week - Jiffy(start).week;
     for (int w = 0; w <= weeksAmount; w++) {
-      weeks.add(Week(Jiffy(Jiffy(start).add(weeks: w)).startOf(Units.WEEK).dateTime));
+      await Jiffy.locale("en_au");
+      weeks.add(Week(Jiffy(Jiffy(start).add(weeks: w)).startOf(Units.WEEK).dateTime.add(const Duration(days: 1))));
     }
 
     List<Booking> bookings = await getBookings();
@@ -133,9 +138,9 @@ class Schedule {
     String orgName = "";
     String schedulePath = "";
     if (json.containsKey("path")) {
-      orgName = json['entry']['orgName'];
-      entryPath = json['entry']['entryPath'];
-      schedulePath = json['entry']['schedulePath'];
+      orgName = json['path']['orgName'];
+      entryPath = json['path']['entryPath'];
+      schedulePath = json['path']['schedulePath'];
     }
 
     Schedule schedule = Schedule(headers: fromHeaders, entryPath: entryPath, orgName: orgName, schedulePath: schedulePath);
@@ -166,7 +171,7 @@ class Schedule {
         'loc': locCatIndex,
         'tutor': tutorCatIndex
       },
-      'range': range.toSettingsJson(),
+      'range': range.toJson(),
       'path': {
         'orgName': orgName,
         'entryPath': entryPath,

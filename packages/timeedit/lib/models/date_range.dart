@@ -161,7 +161,7 @@ class DateRange {
     return range;
   }
 
-  /// Converts the instance into a JSON object.
+  /// Converts the instance into a JSON object string.
   String toSettingsJson() {
     return json.encode({
       'startType': rangeStartType.index,
@@ -171,5 +171,17 @@ class DateRange {
       'relativeStart': relativeStart,
       'relativeEnd': relativeEnd
     });
+  }
+
+  /// Converts the instance into a JSON object.
+  Map<String, dynamic> toJson() {
+    return {
+      'startType': rangeStartType.index,
+      'endType': rangeEndType.index,
+      'startDate': rangeStart.millisecondsSinceEpoch,
+      'endDate': rangeEnd.millisecondsSinceEpoch,
+      'relativeStart': relativeStart,
+      'relativeEnd': relativeEnd
+    };
   }
 }
