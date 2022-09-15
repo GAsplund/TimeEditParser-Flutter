@@ -45,7 +45,7 @@ class ScheduleSearch extends Organization {
     if (!useCache /*|| !Application.Current.Properties.ContainsKey("groupsCache")*/) {
       Map<String, String> groups = <String, String>{};
 
-      http.Response response = await http.get(Uri.parse(linkbase + orgName + "/web/$listPath/objects.html?fr=t&partajax=t&im=f" + filters));
+      http.Response response = await http.get(Uri.parse(linkbase + orgName + "/web/$listPath/objects.html?fr=t&partajax=t&sid=3&im=f" + filters));
       dom.Document document = parser.parse(response.body);
 
       // Select divs with classes clickable2 and searchObject
