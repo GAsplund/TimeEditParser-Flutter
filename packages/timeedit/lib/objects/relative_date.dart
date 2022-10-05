@@ -1,25 +1,25 @@
 import 'package:timeedit/objects/timeedit_date.dart';
 
 class TimeEditRelativeDate extends TimeEditDate {
-  TimeEditRelativeDateType type;
+  RelativeDateType type;
   int length;
 
-  TimeEditRelativeDate({this.type = TimeEditRelativeDateType.week, this.length = 3});
+  TimeEditRelativeDate({this.type = RelativeDateType.week, this.length = 3});
 
   @override
   String toString() {
     String relative = length.toString() + ".";
     switch (type) {
-      case TimeEditRelativeDateType.week:
+      case RelativeDateType.week:
         relative += "w";
         break;
-      case TimeEditRelativeDateType.day:
+      case RelativeDateType.day:
         relative += "d";
         break;
-      case TimeEditRelativeDateType.month:
+      case RelativeDateType.month:
         relative += "m";
         break;
-      case TimeEditRelativeDateType.hour:
+      case RelativeDateType.hour:
         relative += "h";
         break;
     }
@@ -30,16 +30,16 @@ class TimeEditRelativeDate extends TimeEditDate {
   DateTime toDateTime() {
     DateTime now = DateTime.now();
     switch (type) {
-      case TimeEditRelativeDateType.week:
+      case RelativeDateType.week:
         return now.add(Duration(days: length * 7));
-      case TimeEditRelativeDateType.day:
+      case RelativeDateType.day:
         return now.add(Duration(days: length));
-      case TimeEditRelativeDateType.month:
+      case RelativeDateType.month:
         return now.add(Duration(days: length * 30));
-      case TimeEditRelativeDateType.hour:
+      case RelativeDateType.hour:
         return now.add(Duration(hours: length));
     }
   }
 }
 
-enum TimeEditRelativeDateType { month, week, day, hour }
+enum RelativeDateType { month, week, day, hour }

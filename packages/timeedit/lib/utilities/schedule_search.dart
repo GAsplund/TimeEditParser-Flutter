@@ -7,7 +7,7 @@ import 'package:timeedit/src/timeedit_web.dart';
 
 /// A class for building a [Schedule].
 class ScheduleSearch {
-  TimeEditDate startDate = TimeEditRelativeDate(type: TimeEditRelativeDateType.week, length: 0);
+  TimeEditDate startDate = TimeEditRelativeDate(type: RelativeDateType.week, length: 0);
   TimeEditDate endDate = TimeEditRelativeDate();
 
   List<String> objects = [];
