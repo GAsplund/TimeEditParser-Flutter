@@ -1,15 +1,13 @@
 import 'package:timeedit/utilities/schedule_search_builder.dart';
 
 /// A class for building a [ScheduleSearchBuilder] object.
-class EntryPageBuilder {
+class OrgStart {
   List<String> entries = [];
   String org;
 
   late String entry;
 
-  EntryPageBuilder(this.org) {
-    //pageIds = TimeEditWeb.getPageIds(org, entry);
-  }
+  OrgStart(this.org);
 
   /// Builds a [ScheduleSearchBuilder] object.
   ScheduleSearchBuilder build() {
