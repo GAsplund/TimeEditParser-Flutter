@@ -1,5 +1,5 @@
 import 'package:timeedit/utilities/schedule_search.dart';
-import 'package:timeedit/utilities/timeedit_web.dart';
+import 'package:timeedit/src/timeedit_web.dart';
 
 /// A class for finding and building a [ScheduleSearch] object.
 class ScheduleSearchBuilder {

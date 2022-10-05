@@ -3,7 +3,7 @@ import 'package:timeedit/objects/filter_query.dart';
 import 'package:timeedit/objects/relative_date.dart';
 import 'package:timeedit/objects/schedule.dart';
 import 'package:timeedit/objects/timeedit_date.dart';
-import 'package:timeedit/utilities/timeedit_web.dart';
+import 'package:timeedit/src/timeedit_web.dart';
 
 /// A class for building a [Schedule].
 class ScheduleSearch {
