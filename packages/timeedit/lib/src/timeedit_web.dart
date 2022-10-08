@@ -55,7 +55,30 @@ class TimeEditWeb {
   /// Returns a JSON object with the organisation results.
   static Future<Map<String, dynamic>> searchOrgs(String query) async {
     String url = "https://www.timeedit.net/v1/search/web?term=$query";
-    return jsonDecode(await _getURLRaw(url));
+    return await _getURLJSON(url);
+  }
+
+  /// Gets a list of entries on [org]
+  static Future<List<OrgEntry>> getEntries(String org) async {
+    String url = linkbase + "$org/s.html";
+    List<OrgEntry> entries = [];
+
+    // Get HTML
+    dom.Document document = await _getURLDOM(url);
+
+    // Get entries
+    dom.Element? list = document.querySelector("#entrylist");
+    if (list != null) {
+      for (dom.Element entry in list.children) {
+        String name = entry.querySelector("a")!.text;
+        String description = entry.querySelector("span")!.text;
+        String link = entry.querySelector("a")!.attributes["href"]!;
+        bool isLocked = entry.querySelector("img") != null;
+        entries.add(OrgEntry(name, description, link, isLocked));
+      }
+    }
+
+    return entries;
   }
 
   static Future<String> _getURLRaw(String url) async {
