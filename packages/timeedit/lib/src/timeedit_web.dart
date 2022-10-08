@@ -64,7 +64,10 @@ class TimeEditWeb {
   }
 
   static Future<dom.Document> _getURLDOM(String url) async {
-    http.Response response = await http.get(Uri.parse(url));
-    return parser.parse(response);
+    return parser.parse(await _getURLRaw(url));
+  }
+
+  static Future<Map<String, dynamic>> _getURLJSON(String url) async {
+    return jsonDecode(await _getURLRaw(url));
   }
 }
