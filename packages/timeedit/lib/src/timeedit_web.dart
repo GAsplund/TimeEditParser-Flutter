@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
 import 'package:timeedit/objects/category.dart';
+import 'package:timeedit/objects/org_entry.dart';
+import 'package:timeedit/objects/schedule_object.dart';
 
 const linkbase = "https://cloud.timeedit.net/";
 
@@ -23,22 +25,47 @@ class TimeEditWeb {
     }
     url = url.substring(0, url.length - 1);
 
-    return jsonDecode(await _getURLRaw(url));
+    return await _getURLJSON(url);
   }
 
   /// Gets a list of schedule objects at [org]/[entry]/[pageId].
   ///
-  /// Returns a list of [String] that are the schedule objects.
-  static List<String> getObjects(String org, String entry, List<int> categories, List<String> filters) {
-    String url = linkbase + "$org/$entry/objects.html";
-    return [];
+  /// Returns a list of [ScheduleObject] that are the schedule objects.
+  static Future<List<ScheduleObject>> getObjects(
+      String org, String entry, int pageId, List<int> types, List<String> filters) async {
+    String url = linkbase + "$org/$entry/objects.html?sid=$pageId&partajax=t";
+    List<ScheduleObject> objects = [];
+
+    // Add types
+    url += "&types=";
+    for (int type in types) {
+      url += "$type,";
+    }
+    url = url.substring(0, url.length - 1);
+
+    // TODO: Add filters
+
+    dom.Document document = await _getURLDOM(url);
+
+    // Get all objects
+    dom.Element? list = document.querySelector(".searchObject");
+    if (list != null) {
+      for (dom.Element element in list.children) {
+        String id = element.attributes["data-id"]!;
+        String name = element.attributes["data-name"]!;
+        String type = element.attributes["data-type"]!;
+        objects.add(ScheduleObject(id, name, type));
+      }
+    }
+
+    return objects;
   }
 
   /// Gets all available categories from [org]/[entry]/[pageId]
   ///
   /// Returns a list of [Category] objects.
   static List<Category> getCategories(String org, String entry, int pageId) {
-    String url = linkbase + "$org/$entry/ri.html?sid=$pageId";
+    String url = linkbase + "$org/$entry/ri.html?sid=$pageId&objects=0";
     return [];
   }
 
