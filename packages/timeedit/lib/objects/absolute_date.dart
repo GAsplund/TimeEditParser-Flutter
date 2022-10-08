@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:timeedit/objects/timeedit_date.dart';
 
 class TimeEditAbsoluteDate extends TimeEditDate {
@@ -5,7 +6,7 @@ class TimeEditAbsoluteDate extends TimeEditDate {
 
   @override
   String toString() {
-    return date.toIso8601String();
+    return DateFormat("yyyyMMdd").format(date);
   }
 
   @override
