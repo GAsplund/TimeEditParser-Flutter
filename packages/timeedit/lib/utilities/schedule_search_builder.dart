@@ -7,14 +7,12 @@ class ScheduleSearchBuilder {
   String org;
   String entry;
 
-  late int pageId;
-
   ScheduleSearchBuilder(this.org, this.entry) {
     pageIds = TimeEditWeb.getPageIds(org, entry);
   }
 
   /// Builds a [ScheduleSearch] object.
-  ScheduleSearch build() {
+  ScheduleSearch build(int pageId) {
     return ScheduleSearch(org, entry, pageId);
   }
 }

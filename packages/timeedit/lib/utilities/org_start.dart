@@ -7,12 +7,11 @@ class OrgStart {
   List<OrgEntry> entries = [];
   String org;
 
-  late String entry;
-
   OrgStart._create(this.org);
 
   static Future<OrgStart> create(String org) async {
     OrgStart component = OrgStart._create(org);
+    component.getEntries();
     return component;
   }
 
@@ -21,7 +20,7 @@ class OrgStart {
   }
 
   /// Builds a [ScheduleSearchBuilder] object.
-  ScheduleSearchBuilder build() {
+  ScheduleSearchBuilder build(String entry) {
     return ScheduleSearchBuilder(org, entry);
   }
 }
