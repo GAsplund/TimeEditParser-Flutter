@@ -25,6 +25,6 @@ class ScheduleSearch {
 
   Future<Schedule> getSchedule() async {
     Map<String, dynamic> json = await TimeEditWeb.getSchedule(org, entry, pageId, objects);
-    return Schedule("", json["columnheaders"], json["reservations"], startDate, endDate);
+    return Schedule("", json["columnheaders"], json["reservations"], startDate, endDate, org, entry);
   }
 }

@@ -3,12 +3,14 @@ import 'package:timeedit/objects/timeedit_date.dart';
 
 class Schedule {
   String url;
+  String org;
+  String entry;
   List<String> headers;
   List<Booking> bookings;
   TimeEditDate startDate;
   TimeEditDate endDate;
 
-  Schedule(this.url, this.headers, this.bookings, this.startDate, this.endDate);
+  Schedule(this.url, this.headers, this.bookings, this.startDate, this.endDate, this.org, this.entry);
 
   DateTime get startTime {
     return startDate.toDateTime();
