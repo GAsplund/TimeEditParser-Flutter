@@ -1,8 +1,8 @@
 import 'package:timeedit/objects/booking.dart';
-import 'package:timeeditparser_flutter/models/schedule_filter.dart';
+import 'package:timeedit_parser/models/schedule_filter.dart';
 
 class ScheduleAttrFilter extends ScheduleFilter {
-  ScheduleAttrFilter(isBlacklist, this.filter) : super(isBlacklist);
+  ScheduleAttrFilter(isBlacklist, this.filter, this.column) : super(isBlacklist);
 
   final String filter;
   int column;

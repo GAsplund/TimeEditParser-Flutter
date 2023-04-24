@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "timeeditparser_flutter" "\0"
+            VALUE "CompanyName", "com.gasplund" "\0"
+            VALUE "FileDescription", "timeedit_parser" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "timeeditparser_flutter" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2022 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "timeeditparser_flutter.exe" "\0"
-            VALUE "ProductName", "timeeditparser_flutter" "\0"
+            VALUE "InternalName", "timeedit_parser" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2023 com.gasplund. All rights reserved." "\0"
+            VALUE "OriginalFilename", "timeedit_parser.exe" "\0"
+            VALUE "ProductName", "timeedit_parser" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

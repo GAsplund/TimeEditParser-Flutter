@@ -1,6 +1,6 @@
 import 'package:timeedit/objects/org_entry.dart';
 import 'package:timeedit/utilities/org_start.dart';
-import 'package:timeeditparser_flutter/models/pathSelector.dart';
+import 'package:timeedit_parser/models/pathSelector.dart';
 
 class EntryPathSelector extends PathSelector {
   @override

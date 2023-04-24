@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SubMenuButton extends StatefulWidget {
-  SubMenuButton({@required this.title, this.onPressed, this.disabled});
+  SubMenuButton({required this.title, this.onPressed, this.disabled = false});
   final Widget title;
-  final Function onPressed;
+  final VoidCallback? onPressed;
   final bool disabled;
 
   @override
@@ -12,9 +12,9 @@ class SubMenuButton extends StatefulWidget {
 }
 
 class _SubMenuButtonState extends State<SubMenuButton> {
-  _SubMenuButtonState({@required this.title, this.onPressed, this.disabled});
+  _SubMenuButtonState({required this.title, this.onPressed, this.disabled = false});
   final Widget title;
-  final Function onPressed;
+  final VoidCallback? onPressed;
   final bool disabled;
 
   @override
@@ -37,7 +37,7 @@ class _SubMenuButtonState extends State<SubMenuButton> {
                 title: _title,
                 trailing: Icon(
                   Icons.arrow_forward,
-                  color: Theme.of(context).textTheme.bodyLarge.color,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                 ))));
   }
 }

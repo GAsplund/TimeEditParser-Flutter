@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:timeeditparser_flutter/utilities/settings.dart' as settings;
-import 'package:timeeditparser_flutter/utilities/theming.dart';
+import 'package:timeedit_parser/utilities/settings.dart' as settings;
+import 'package:timeedit_parser/utilities/theming.dart';
 
 class SettingsPage extends StatefulWidget {
-  SettingsPage({this.theming});
+  SettingsPage({required this.theming});
 
   final Theming theming;
 
@@ -12,7 +12,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  _SettingsPageState({@required this.theming});
+  _SettingsPageState({required this.theming});
   Theming theming;
 
   @override
@@ -38,30 +38,35 @@ class _SettingsPageState extends State<SettingsPage> {
                 DropdownMenuItem(
                   value: "2",
                   child: RichText(
-                      text: TextSpan(style: Theme.of(context).textTheme.bodyText1, children: [
-                    WidgetSpan(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0), child: Icon(Icons.wb_sunny))),
+                      text: TextSpan(style: Theme.of(context).textTheme.bodyText1, children: const [
+                    WidgetSpan(
+                        child: Padding(padding: EdgeInsets.symmetric(horizontal: 2.0), child: Icon(Icons.wb_sunny))),
                     TextSpan(text: "Light")
                   ])),
                 ),
                 DropdownMenuItem(
                   value: "1",
                   child: RichText(
-                      text: TextSpan(style: Theme.of(context).textTheme.bodyText1, children: [
-                    WidgetSpan(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0), child: Icon(Icons.wb_incandescent))),
+                      text: TextSpan(style: Theme.of(context).textTheme.bodyText1, children: const [
+                    WidgetSpan(
+                        child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 2.0), child: Icon(Icons.wb_incandescent))),
                     TextSpan(text: "Dark")
                   ])),
                 ),
                 DropdownMenuItem(
                   value: "0",
                   child: RichText(
-                      text: TextSpan(style: Theme.of(context).textTheme.bodyText1, children: [
-                    WidgetSpan(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0), child: Icon(Icons.settings))),
+                      text: TextSpan(style: Theme.of(context).textTheme.bodyText1, children: const [
+                    WidgetSpan(
+                        child: Padding(padding: EdgeInsets.symmetric(horizontal: 2.0), child: Icon(Icons.settings))),
                     TextSpan(text: "System")
                   ])),
                 ),
               ],
-              onChanged: (String value) {
-                settings.setCurrentTheme(ThemeMode.values[int.tryParse(value)], theming);
+              onChanged: (String? value) {
+                if (value == null) return;
+                settings.setCurrentTheme(ThemeMode.values[int.tryParse(value) ?? 0], theming);
                 setState(() {});
               },
             ),

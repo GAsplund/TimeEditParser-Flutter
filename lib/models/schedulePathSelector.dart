@@ -1,5 +1,5 @@
 import 'package:timeedit/utilities/schedule_search_builder.dart';
-import 'package:timeeditparser_flutter/models/pathSelector.dart';
+import 'package:timeedit_parser/models/pathSelector.dart';
 
 class SchedulePathSelector extends PathSelector {
   @override

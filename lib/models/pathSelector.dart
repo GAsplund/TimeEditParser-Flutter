@@ -1,7 +1,7 @@
 abstract class PathSelector {
-  String pathType;
+  //String pathType;
   List<String> pathPrefix;
-  PathSelector({this.pathPrefix});
+  PathSelector({required this.pathPrefix});
   Future<List<PathSelected>> getPaths();
 }
 

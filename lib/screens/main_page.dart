@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:timeeditparser_flutter/screens/scheduleListPage.dart';
-import 'package:timeeditparser_flutter/screens/testingPage.dart';
-import 'package:timeeditparser_flutter/utilities/theming.dart';
+//import 'package:timeeditparser_flutter/screens/schedule_list_page.dart';
+//import 'package:timeeditparser_flutter/screens/testing_page.dart';
+import 'package:timeedit_parser/utilities/theming.dart';
 
-import 'homePage.dart';
-import 'schedulePage.dart';
+import 'home_page.dart';
+import 'schedule_page.dart';
 
 class MainPage extends StatefulWidget {
-  MainPage({this.theming});
+  MainPage({required this.theming});
 
   final Theming theming;
 
@@ -16,9 +16,9 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  _MainPageState({this.theming});
+  _MainPageState({required this.theming});
   Theming theming;
-  List<Widget> _widgetOptions;
+  List<Widget> _widgetOptions = [];
 
   int _selectedIndex = 0;
   @override
@@ -28,8 +28,8 @@ class _MainPageState extends State<MainPage> {
         theming: theming,
       ),
       SchedulePage(),
-      ScheduleListPage(),
-      TestingPage()
+      SchedulePage(),
+      SchedulePage()
     ];
     super.initState();
   }

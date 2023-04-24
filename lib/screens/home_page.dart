@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:timeeditparser_flutter/screens/settingsPage.dart';
-import 'package:timeeditparser_flutter/utilities/theming.dart';
+import 'package:timeedit_parser/screens/settings_page.dart';
+import 'package:timeedit_parser/utilities/theming.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({@required this.theming});
+  HomePage({required this.theming});
   final Theming theming;
 
   @override
@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  _HomePageState({@required this.theming});
+  _HomePageState({required this.theming});
   final Theming theming;
 
   @override
@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         body: ListView(children: [
-          Text("Hello, Gustaf!", style: Theme.of(context).textTheme.headline4),
+          Text("Hello, Gustaf!", style: Theme.of(context).textTheme.headlineMedium),
           Text("Today, there are 0 bookings.")
         ]));
   }

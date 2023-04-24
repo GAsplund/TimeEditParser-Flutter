@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 
 class LessonScheduleWidget extends StatefulWidget {
-  LessonScheduleWidget({@required this.name, @required this.tutors, @required this.startTime, @required this.endTime, @required this.location, @required this.idNum});
+  LessonScheduleWidget(
+      {required this.name,
+      required this.tutors,
+      required this.startTime,
+      required this.endTime,
+      required this.location,
+      required this.idNum});
 
   final String name;
   final String tutors;
@@ -12,11 +18,18 @@ class LessonScheduleWidget extends StatefulWidget {
   final String idNum;
 
   @override
-  _LessonScheduleWidgetState createState() => _LessonScheduleWidgetState(name: name, tutors: tutors, startTime: startTime, endTime: endTime, location: location, idNum: idNum);
+  _LessonScheduleWidgetState createState() => _LessonScheduleWidgetState(
+      name: name, tutors: tutors, startTime: startTime, endTime: endTime, location: location, idNum: idNum);
 }
 
 class _LessonScheduleWidgetState extends State<LessonScheduleWidget> {
-  _LessonScheduleWidgetState({@required this.name, @required this.tutors, @required this.startTime, @required this.endTime, @required this.location, @required this.idNum});
+  _LessonScheduleWidgetState(
+      {required this.name,
+      required this.tutors,
+      required this.startTime,
+      required this.endTime,
+      required this.location,
+      required this.idNum});
 
   String name;
   String tutors;
@@ -26,7 +39,8 @@ class _LessonScheduleWidgetState extends State<LessonScheduleWidget> {
   String idNum;
 
   TextStyle changedStyle = TextStyle(color: Colors.orange, fontWeight: FontWeight.bold);
-  TextStyle cancelledStyle = TextStyle(color: Colors.red, fontWeight: FontWeight.bold, decoration: TextDecoration.lineThrough);
+  TextStyle cancelledStyle =
+      TextStyle(color: Colors.red, fontWeight: FontWeight.bold, decoration: TextDecoration.lineThrough);
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +56,7 @@ class _LessonScheduleWidgetState extends State<LessonScheduleWidget> {
               Padding(
                   padding: const EdgeInsets.only(left: 3),
                   child: Column(
-                    children: [
-                      Text(startTime),
-                      Text("|", style: Theme.of(context).textTheme.caption),
-                      Text(endTime)
-                    ],
+                    children: [Text(startTime), Text("|", style: Theme.of(context).textTheme.caption), Text(endTime)],
                   )),
               Padding(
                   padding: const EdgeInsets.only(left: 10),
@@ -68,10 +78,7 @@ class _LessonScheduleWidgetState extends State<LessonScheduleWidget> {
                   )),
             ],
           ),
-          children: [
-            Padding(padding: const EdgeInsets.only(left: 8), child: Text(location)),
-            Text("ID: " + idNum)
-          ],
+          children: [Padding(padding: const EdgeInsets.only(left: 8), child: Text(location)), Text("ID: " + idNum)],
         )
 
         /*Card(

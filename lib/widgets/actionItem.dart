@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class ActionButtonWidget extends StatefulWidget {
-  ActionButtonWidget({@required this.courseName, @required this.tutors, @required this.startTime, @required this.endTime, @required this.location, @required this.idNum});
+  ActionButtonWidget(
+      {required this.courseName,
+      required this.tutors,
+      required this.startTime,
+      required this.endTime,
+      required this.location,
+      required this.idNum});
 
   final String courseName;
   final String tutors;
@@ -11,11 +17,18 @@ class ActionButtonWidget extends StatefulWidget {
   final String idNum;
 
   @override
-  _ActionButtonWidgetState createState() => _ActionButtonWidgetState(courseName: courseName, tutors: tutors, startTime: startTime, endTime: endTime, location: location, idNum: idNum);
+  _ActionButtonWidgetState createState() => _ActionButtonWidgetState(
+      courseName: courseName, tutors: tutors, startTime: startTime, endTime: endTime, location: location, idNum: idNum);
 }
 
 class _ActionButtonWidgetState extends State<ActionButtonWidget> {
-  _ActionButtonWidgetState({@required this.courseName, @required this.tutors, @required this.startTime, @required this.endTime, @required this.location, @required this.idNum});
+  _ActionButtonWidgetState(
+      {required this.courseName,
+      required this.tutors,
+      required this.startTime,
+      required this.endTime,
+      required this.location,
+      required this.idNum});
 
   String courseName;
   String tutors;
@@ -25,7 +38,8 @@ class _ActionButtonWidgetState extends State<ActionButtonWidget> {
   String idNum;
 
   TextStyle changedStyle = TextStyle(color: Colors.orange, fontWeight: FontWeight.bold);
-  TextStyle cancelledStyle = TextStyle(color: Colors.red, fontWeight: FontWeight.bold, decoration: TextDecoration.lineThrough);
+  TextStyle cancelledStyle =
+      TextStyle(color: Colors.red, fontWeight: FontWeight.bold, decoration: TextDecoration.lineThrough);
 
   @override
   Widget build(BuildContext context) {

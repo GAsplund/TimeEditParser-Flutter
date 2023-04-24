@@ -5,7 +5,7 @@ import 'package:timeedit/objects/schedule.dart';
 
 import 'package:intl/intl.dart';
 
-import 'package:timeeditparser_flutter/widgets/scheduleItem.dart';
+import 'package:timeedit_parser/widgets/scheduleItem.dart';
 
 const platform = const MethodChannel('scheduleNotification');
 
@@ -53,7 +53,8 @@ List<Widget> bookingsToScheduleItems(List<Booking> bookings, int cutoff) {
   for (Booking booking in bookings) {
     if (booking.startTime.day != lastDay) {
       lastDay = booking.startTime.day;
-      dayItems.add(new Text(booking.startTime.day.toString() + "/" + booking.startTime.month.toString(), style: TextStyle(fontSize: 20)));
+      dayItems.add(new Text(booking.startTime.day.toString() + "/" + booking.startTime.month.toString(),
+          style: TextStyle(fontSize: 20)));
       dayCount++;
     }
     if (dayCount > cutoff) {
@@ -61,7 +62,13 @@ List<Widget> bookingsToScheduleItems(List<Booking> bookings, int cutoff) {
     }
     // TODO: Get the correct data from the booking headers
     //dayItems.add(new LessonScheduleWidget(name: booking.tryGetData(nameIndex), location: booking.tryGetData(locationIndex), startTime: formatter.format(booking.startTime), endTime: formatter.format(booking.endTime), tutors: booking.tryGetData(tutorIndex), idNum: booking.id));
-    dayItems.add(new LessonScheduleWidget(name: booking.headersData[0], location: booking.headersData[1], startTime: formatter.format(booking.startTime), endTime: formatter.format(booking.endTime), tutors: booking.headersData[2], idNum: booking.id));
+    dayItems.add(new LessonScheduleWidget(
+        name: booking.headersData[0],
+        location: booking.headersData[1],
+        startTime: formatter.format(booking.startTime),
+        endTime: formatter.format(booking.endTime),
+        tutors: booking.headersData[2],
+        idNum: booking.id));
   }
   return dayItems;
 }
