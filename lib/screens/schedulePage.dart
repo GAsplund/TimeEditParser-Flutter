@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:timeedit/models/schedule.dart';
+import 'package:timeedit/objects/schedule.dart';
+import 'package:timeedit/utilities/schedule_builder.dart';
 import 'package:timeeditparser_flutter/screens/scheduleListPage.dart';
 import 'package:timeeditparser_flutter/screens/scheduleModifyPage.dart';
 import 'package:timeeditparser_flutter/utilities/schedule_parser.dart';
@@ -14,7 +15,7 @@ class SchedulePage extends StatefulWidget {
 }
 
 class _SchedulePageState extends State<SchedulePage> {
-  Schedule schedule = settings.currentSchedule;
+  ScheduleBuilder builder = settings.currentBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +23,18 @@ class _SchedulePageState extends State<SchedulePage> {
         //backgroundColor: Color.fromARGB(255, 230, 230, 230),
         appBar: AppBar(title: Text("Schedule")),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: (schedule == null)
+        body: (builder == null)
             ? _buildNoSchedule()
             : ((_validScheduleSettings())
                 ? FutureBuilder(
-                    future: getScheduleWidgets(schedule),
-                    builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
+                    future: builder.getSchedule(),
+                    builder: (BuildContext context, AsyncSnapshot<Schedule> snapshot) {
                       if (snapshot.hasData) {
+                        List<Widget> widgets = getScheduleWidgets(snapshot.data);
                         return ListView.builder(
-                          itemCount: snapshot.data.length,
+                          itemCount: widgets.length,
                           itemBuilder: (BuildContext bContext, int index) {
-                            return snapshot.data[index];
+                            return widgets[index];
                           },
                         );
                       } else if (snapshot.hasError) {
@@ -71,10 +73,10 @@ class _SchedulePageState extends State<SchedulePage> {
 
   bool _validScheduleSettings() {
     // Perform a basic check if the properties of the schedule are correctly set
-    if (schedule == null) {
+    if (builder == null) {
       return false;
     }
-    return schedule.orgName != null && schedule.entryPath != null && schedule.schedulePath != null && schedule.groups.isNotEmpty;
+    return builder.org != null && builder.entry != null /*&& builder.url != null*/ && builder.objects.isNotEmpty;
   }
 
   Widget _buildNoSchedule() {
@@ -121,12 +123,12 @@ class _SchedulePageState extends State<SchedulePage> {
                 title: Text("Modify Schedule"),
               ),
               body: ScheduleModifyPage(
-                editedSchedule: schedule,
-                newSchedule: false,
+                editedBuilder: builder,
+                newBuilder: false,
               ))),
     );
 
-    settings.currentSchedule = (result is Schedule) ? result : schedule;
-    schedule = settings.currentSchedule;
+    settings.currentBuilder = (result is Schedule) ? result : builder;
+    builder = settings.currentBuilder;
   }
 }

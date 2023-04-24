@@ -1,4 +1,4 @@
-import 'package:timeedit/models/booking.dart';
+import 'package:timeedit/objects/booking.dart';
 import 'package:timeeditparser_flutter/models/schedule_filter.dart';
 
 class ScheduleAttrFilter extends ScheduleFilter {
@@ -8,6 +8,6 @@ class ScheduleAttrFilter extends ScheduleFilter {
   int column;
   bool match(Booking b) {
     // Perform an XOR with isBlacklist to invert match
-    return isBlacklist ^ (b.tryGetData(column) == filter);
+    return isBlacklist ^ (b.headersData[column] == filter);
   }
 }

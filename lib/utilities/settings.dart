@@ -2,53 +2,53 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timeedit/models/schedule.dart';
+import 'package:timeedit/utilities/schedule_builder.dart';
 import 'package:timeeditparser_flutter/utilities/theming.dart';
 
 SharedPreferences prefs;
 Future<void> getSettings() async {
   prefs = await SharedPreferences.getInstance();
-  _currentSchedule = Schedule.fromSettingsJson(json.decode(prefs?.getString("currentSchedule")));
+  _currentBuilder = ScheduleBuilder.fromJson(json.decode(prefs?.getString("currentSchedule")));
 
-  _schedules = [];
+  _builders = [];
   try {
-    for (String item in json.decode(prefs?.getString("schedules"))) _schedules.add(Schedule.fromSettingsJson(json.decode(item)));
+    for (String item in json.decode(prefs?.getString("schedules"))) _builders.add(ScheduleBuilder.fromJson(json.decode(item)));
   } on FormatException catch (_) {
     print('The provided string is not valid JSON');
   }
 }
 
 // schedules setting
-List<Schedule> _schedules;
+List<ScheduleBuilder> _builders;
 
-List<Schedule> get schedules {
-  if (_schedules == null) return [];
-  return _schedules;
+List<ScheduleBuilder> get builders {
+  if (_builders == null) return [];
+  return _builders;
 }
 
-set schedules(List<Schedule> newSchedules) {
-  List<String> schedulesJson = [];
-  for (Schedule schedule in newSchedules) schedulesJson.add(schedule.toSettingsJson());
-  prefs?.setString("schedules", jsonEncode(schedulesJson));
-  _schedules = newSchedules;
+set schedules(List<ScheduleBuilder> newBuilders) {
+  List<String> buildersJson = [];
+  for (ScheduleBuilder builder in newBuilders) buildersJson.add(builder.toJson());
+  prefs?.setString("schedules", jsonEncode(buildersJson));
+  _builders = newBuilders;
 }
 
 // currentSchedule setting
-Schedule _currentSchedule;
+ScheduleBuilder _currentBuilder;
 // This will not work if you remove a schedule whose location is before the index.
 // What to do?
 //int _currentScheduleIndex;
 
-Schedule get currentSchedule {
+ScheduleBuilder get currentBuilder {
   /*if (_currentSchedule == null) {
     _currentSchedule = new Schedule(headers: [], orgName: "timeedit_sso_test", entryPath: "publik", schedulePath: "ri1Q7");
   }*/
-  return _currentSchedule;
+  return _currentBuilder;
 }
 
-set currentSchedule(Schedule newSchedule) {
-  prefs?.setString("currentSchedule", newSchedule.toSettingsJson());
-  _currentSchedule = newSchedule;
+set currentBuilder(ScheduleBuilder newBuilder) {
+  prefs?.setString("currentSchedule", newBuilder.toJson());
+  _currentBuilder = newBuilder;
 }
 
 // useTheme setting

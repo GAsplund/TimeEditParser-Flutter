@@ -1,4 +1,4 @@
-import 'package:timeedit/models/link_list.dart';
+import 'package:timeedit/utilities/schedule_search_builder.dart';
 import 'package:timeeditparser_flutter/models/pathSelector.dart';
 
 class SchedulePathSelector extends PathSelector {
@@ -8,12 +8,13 @@ class SchedulePathSelector extends PathSelector {
   SchedulePathSelector({pathPrefix}) : super(pathPrefix: pathPrefix);
 
   Future<List<PathSelected>> getPaths() async {
-    LinkList ll = new LinkList(orgName: pathPrefix.first, entryPath: pathPrefix[1], description: '', name: '');
-    List<List<String>> links = await ll.getLinks();
+    ScheduleSearchBuilder sb = new ScheduleSearchBuilder(pathPrefix.first, pathPrefix[1]);
+    //LinkList ll = new LinkList(orgName: pathPrefix.first, entryPath: pathPrefix[1], description: '', name: '');
 
     List<PathSelected> paths = [];
-    for (List<String> link in links) {
-      paths.add(PathSelected(link[0], link[2]));
+    for (int entry in sb.pageIds) {
+      // TODO: Add entry paths
+      //paths.add(PathSelected(entry.url, entry.description));
     }
     return paths;
   }

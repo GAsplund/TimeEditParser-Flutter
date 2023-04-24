@@ -42,4 +42,23 @@ class TimeEditRelativeDate extends TimeEditDate {
   }
 }
 
-enum RelativeDateType { month, week, day, hour }
+enum RelativeDateType {
+  month,
+  week,
+  day,
+  hour;
+
+  static RelativeDateType fromString(String type) {
+    switch (type) {
+      case "m":
+        return RelativeDateType.month;
+      case "d":
+        return RelativeDateType.day;
+      case "h":
+        return RelativeDateType.hour;
+      case "w":
+      default:
+        return RelativeDateType.week;
+    }
+  }
+}

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:timeedit/models/booking.dart';
-import 'package:timeedit/models/day.dart';
+import 'package:timeedit/objects/booking.dart';
 
 enum EventType { aboutToStart, start, aboutToEnd, end }
 
@@ -14,9 +13,9 @@ class NotificationEvent {
 class Notification {
   static const MethodChannel _channel = MethodChannel('flutter.notification');
 
-  Future setNotifSchedule(Day day) async {
+  Future setNotifSchedule(List<Booking> bookings) async {
     List<Map<String, int>> events = [];
-    for (Booking booking in day.where((book) => book.endTime.isAfter(DateTime.now()))) {
+    for (Booking booking in bookings.where((book) => book.endTime.isAfter(DateTime.now()))) {
       if (booking.startTime.isAfter(DateTime.now()))
         events.add({
           "TYPE": EventType.start.index,

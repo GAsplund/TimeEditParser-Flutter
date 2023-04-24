@@ -1,26 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:timeedit/models/schedule.dart';
+import 'package:timeedit/objects/schedule.dart';
+import 'package:timeedit/utilities/schedule_builder.dart';
 import 'package:timeeditparser_flutter/widgets/scheduleItem.dart';
 
+/// A page for selecting data layout when rendering a [Booking].
 class ScheduleColumnsPage extends StatefulWidget {
-  ScheduleColumnsPage({@required this.editedSchedule});
+  ScheduleColumnsPage({@required this.editedBuilder, @required this.headers});
 
-  final Schedule editedSchedule;
+  final ScheduleBuilder editedBuilder;
+  final List<String> headers;
 
   @override
-  _ScheduleColumnsPageState createState() => _ScheduleColumnsPageState(editedSchedule: editedSchedule);
+  _ScheduleColumnsPageState createState() => _ScheduleColumnsPageState(editedBuilder: editedBuilder, headers: headers);
 }
 
+// TODO: Apply header changes to either the builder or separate object.
 class _ScheduleColumnsPageState extends State<ScheduleColumnsPage> {
-  _ScheduleColumnsPageState({@required this.editedSchedule});
-  Schedule editedSchedule;
+  _ScheduleColumnsPageState({@required this.editedBuilder, @required this.headers});
+  ScheduleBuilder editedBuilder;
+  List<String> headers;
 
   @override
   Widget build(BuildContext context) {
-    List<int> indices = editedSchedule.headers.asMap().keys.toList();
+    List<int> indices = headers.asMap().keys.toList();
 
     String getHeaderValidIndex(int index) {
-      if (index >= 0 && index < editedSchedule.headers.length)
+      if (index >= 0 && index < headers.length)
         return index.toString();
       else
         return null;
@@ -29,18 +34,18 @@ class _ScheduleColumnsPageState extends State<ScheduleColumnsPage> {
     // Three types: Name, people, location
     return WillPopScope(
         onWillPop: () {
-          Navigator.pop(context, editedSchedule);
+          Navigator.pop(context, editedBuilder);
           return;
         },
         child: Scaffold(
             body: ListView(children: [
           LessonScheduleWidget(
-            name: (getHeaderValidIndex(editedSchedule.nameCatIndex) == null) ? "(Unset)" : editedSchedule.headers[editedSchedule.nameCatIndex],
+            name: "TestName", //(getHeaderValidIndex(editedSchedule.nameCatIndex) == null) ? "(Unset)" : editedSchedule.headers[editedSchedule.nameCatIndex],
             endTime: "23:59",
             idNum: "123456",
-            location: (getHeaderValidIndex(editedSchedule.locCatIndex) == null) ? "(Unset)" : editedSchedule.headers[editedSchedule.locCatIndex],
+            location: "TestLocation", //(getHeaderValidIndex(editedSchedule.locCatIndex) == null) ? "(Unset)" : editedSchedule.headers[editedSchedule.locCatIndex],
             startTime: "11:59",
-            tutors: (getHeaderValidIndex(editedSchedule.tutorCatIndex) == null) ? "(Unset)" : editedSchedule.headers[editedSchedule.tutorCatIndex],
+            tutors: "TestTutors", //(getHeaderValidIndex(editedSchedule.tutorCatIndex) == null) ? "(Unset)" : editedSchedule.headers[editedSchedule.tutorCatIndex],
           ),
           Padding(
               padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
@@ -49,15 +54,15 @@ class _ScheduleColumnsPageState extends State<ScheduleColumnsPage> {
                   child: ListTile(
                     title: Text("Course name"),
                     trailing: DropdownButton(
-                      value: getHeaderValidIndex(editedSchedule.nameCatIndex),
+                      value: "-1" /*getHeaderValidIndex(editedSchedule.nameCatIndex)*/,
                       items: indices.map<DropdownMenuItem<String>>((int value) {
                         return DropdownMenuItem<String>(
                           value: value.toString(),
-                          child: Text(editedSchedule.headers[value]),
+                          child: Text(headers[value]),
                         );
                       }).toList(),
                       onChanged: (String value) {
-                        editedSchedule.nameCatIndex = int.tryParse(value);
+                        //editedSchedule.nameCatIndex = int.tryParse(value);
                         setState(() {});
                       },
                     ),
@@ -69,15 +74,15 @@ class _ScheduleColumnsPageState extends State<ScheduleColumnsPage> {
                   child: ListTile(
                     title: Text("Tutors"),
                     trailing: DropdownButton(
-                      value: getHeaderValidIndex(editedSchedule.tutorCatIndex),
+                      value: "-1" /*getHeaderValidIndex(editedSchedule.tutorCatIndex)*/,
                       items: indices.map<DropdownMenuItem<String>>((int value) {
                         return DropdownMenuItem<String>(
                           value: value.toString(),
-                          child: Text(editedSchedule.headers[value]),
+                          child: Text(headers[value]),
                         );
                       }).toList(),
                       onChanged: (String value) {
-                        editedSchedule.tutorCatIndex = int.tryParse(value);
+                        //editedSchedule.tutorCatIndex = int.tryParse(value);
                         setState(() {});
                       },
                     ),
@@ -89,15 +94,15 @@ class _ScheduleColumnsPageState extends State<ScheduleColumnsPage> {
                   child: ListTile(
                     title: Text("Location"),
                     trailing: DropdownButton(
-                      value: getHeaderValidIndex(editedSchedule.locCatIndex),
+                      value: "-1" /*getHeaderValidIndex(editedSchedule.locCatIndex)*/,
                       items: indices.map<DropdownMenuItem<String>>((int value) {
                         return DropdownMenuItem<String>(
                           value: value.toString(),
-                          child: Text(editedSchedule.headers[value]),
+                          child: Text(headers[value]),
                         );
                       }).toList(),
                       onChanged: (String value) {
-                        editedSchedule.locCatIndex = int.tryParse(value);
+                        //editedSchedule.locCatIndex = int.tryParse(value);
                         setState(() {});
                       },
                     ),

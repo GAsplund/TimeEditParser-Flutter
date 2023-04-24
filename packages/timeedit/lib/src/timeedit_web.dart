@@ -16,6 +16,10 @@ class TimeEditWeb {
   ///
   /// Returns a JSON object with the schedule.
   static Future<Map<String, dynamic>> getSchedule(String org, String entry, int pageId, List<String> objects) async {
+    return await _getURLJSON(getScheduleURL(org, entry, pageId, objects));
+  }
+
+  static String getScheduleURL(String org, String entry, int pageId, List<String> objects) {
     String url = linkbase + "$org/$entry/ri.json?sid=$pageId";
 
     // Add schedule objects
@@ -25,14 +29,13 @@ class TimeEditWeb {
     }
     url = url.substring(0, url.length - 1);
 
-    return await _getURLJSON(url);
+    return url;
   }
 
   /// Gets a list of schedule objects at [org]/[entry]/[pageId].
   ///
   /// Returns a list of [ScheduleObject] that are the schedule objects.
-  static Future<List<ScheduleObject>> getObjects(
-      String org, String entry, int pageId, List<int> types, List<String> filters) async {
+  static Future<List<ScheduleObject>> getObjects(String org, String entry, int pageId, List<int> types, List<String> filters) async {
     String url = linkbase + "$org/$entry/objects.html?sid=$pageId&partajax=t";
     List<ScheduleObject> objects = [];
 
@@ -64,7 +67,7 @@ class TimeEditWeb {
   /// Gets all available categories from [org]/[entry]/[pageId]
   ///
   /// Returns a list of [Category] objects.
-  static List<Category> getCategories(String org, String entry, int pageId) {
+  static Future<List<Category>> getCategories(String org, String entry, int pageId) async {
     String url = linkbase + "$org/$entry/ri.html?sid=$pageId&objects=0";
     return [];
   }
@@ -72,7 +75,7 @@ class TimeEditWeb {
   /// Gets a list of page ids on [org]/[entry]
   ///
   /// Returns a list of [int] that are the page ids.
-  static List<int> getPageIds(String org, String entry) {
+  static Future<List<int>> getPageIds(String org, String entry) async {
     String url = linkbase + "$org/$entry/s.html";
     return [];
   }

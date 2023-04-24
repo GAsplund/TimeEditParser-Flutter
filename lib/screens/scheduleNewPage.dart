@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:timeedit/models/schedule.dart';
+import 'package:timeedit/objects/schedule.dart';
+import 'package:timeedit/utilities/schedule_builder.dart';
 import 'package:timeeditparser_flutter/models/entryPathSelector.dart';
 import 'package:timeeditparser_flutter/screens/pathSelectionPage.dart';
 import 'package:timeeditparser_flutter/utilities/orgSearch.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/schedulePathSelector.dart';
 import 'orgSearchPage.dart';
@@ -26,7 +28,7 @@ class _ScheduleNewPageState extends State<ScheduleNewPage> {
 
   String orgId = "";
   String entryPath = "";
-  String schedulePath = "";
+  int scheduleId = -1;
   List<String> headers = [];
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class _ScheduleNewPageState extends State<ScheduleNewPage> {
         appBar: AppBar(
           title: Text("Add Schedule"),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context, new Schedule(headers: headers, orgName: orgName, entryPath: entryPath, schedulePath: schedulePath)), child: Text("Add"))
+            TextButton(onPressed: () => Navigator.pop(context, new ScheduleBuilder(orgName, entryPath, scheduleId, [])), child: Text("Add"))
           ],
         ),
         body: WillPopScope(
@@ -115,10 +117,10 @@ class _ScheduleNewPageState extends State<ScheduleNewPage> {
                                   Text("Schedule Path"),
                                   TextField(
                                     decoration: InputDecoration(hintText: "Enter schedule path..."),
-                                    controller: new TextEditingController(text: schedulePath),
+                                    controller: new TextEditingController(text: scheduleId.toString()),
                                     enabled: false,
                                     onSubmitted: (value) {
-                                      schedulePath = value;
+                                      scheduleId = int.tryParse(value);
                                       setState(() {});
                                     },
                                   )
@@ -166,9 +168,9 @@ class _ScheduleNewPageState extends State<ScheduleNewPage> {
                     entryPath
                   ]),
                 )));
-    if (result is String) {
+    if (result is int) {
       setState(() {
-        schedulePath = result;
+        scheduleId = result;
       });
     }
   }

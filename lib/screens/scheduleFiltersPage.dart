@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timeedit/models/schedule.dart';
+import 'package:timeedit/objects/schedule.dart';
 
 class ScheduleFiltersPage extends StatefulWidget {
   ScheduleFiltersPage({@required this.editedSchedule});

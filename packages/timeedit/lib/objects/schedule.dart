@@ -10,7 +10,9 @@ class Schedule {
   TimeEditDate startDate;
   TimeEditDate endDate;
 
-  Schedule(this.url, this.headers, this.bookings, this.startDate, this.endDate, this.org, this.entry);
+  String userCustomName;
+
+  Schedule(this.url, this.headers, this.bookings, this.startDate, this.endDate, this.org, this.entry, this.userCustomName);
 
   DateTime get startTime {
     return startDate.toDateTime();

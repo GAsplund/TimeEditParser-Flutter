@@ -1,4 +1,4 @@
-import 'package:timeedit/models/booking.dart';
+import 'package:timeedit/objects/booking.dart';
 
 abstract class ScheduleFilter {
   ScheduleFilter(this.isBlacklist);

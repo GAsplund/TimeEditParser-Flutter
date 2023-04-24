@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:timeeditparser_flutter/screens/mainPage.dart';
 import 'package:timeeditparser_flutter/utilities/theming.dart';
 import 'package:timeeditparser_flutter/utilities/settings.dart' as settings;
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   runApp(TimeEditParser());
@@ -23,6 +25,16 @@ class TimeEditParser extends StatelessWidget {
                   darkTheme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.orange, scaffoldBackgroundColor: Colors.black),
                   themeMode: model.getCurrentTheme(),
                   home: MainPage(theming: model),
+                  localizationsDelegates: [
+                    AppLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  supportedLocales: [
+                    Locale('en', ''), // English, no country code
+                    Locale('sv', ''), // Swedish, no country code
+                  ],
                 )));
   }
 }

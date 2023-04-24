@@ -1,32 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:timeedit/models/search_filter.dart';
-import 'package:timeedit/models/filter_category.dart';
-import 'package:timeedit/models/schedule.dart';
-import 'package:timeedit/utilities/schedule_search.dart';
+import 'package:timeedit/objects/category.dart';
+import 'package:timeedit/objects/filter.dart';
+import 'package:timeedit/objects/schedule.dart';
+import 'package:timeedit/utilities/schedule_builder.dart';
 
 class ScheduleSearchPage extends StatefulWidget {
-  ScheduleSearchPage({this.schedule});
+  ScheduleSearchPage({this.builder});
 
-  final Schedule schedule;
+  final ScheduleBuilder builder;
 
   @override
-  _ScheduleSearchPageState createState() => _ScheduleSearchPageState(schedule: schedule);
+  _ScheduleSearchPageState createState() => _ScheduleSearchPageState(search: builder);
 }
 
 class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
-  _ScheduleSearchPageState({this.schedule});
-  Schedule schedule;
-  ScheduleSearch search;
+  _ScheduleSearchPageState({this.search});
+  ScheduleBuilder search;
 
-  @override
-  void initState() {
-    search = ScheduleSearch.fromSchedule(schedule);
-    super.initState();
-  }
+  //@override
+  //void initState() {
+  //  search = ScheduleBuilder.fromSchedule(schedule);
+  //  super.initState();
+  //}
 
-  Map<String, String> selectedFilters() => schedule.groups;
+  /*Map<String, String> selectedFilters() => schedule.groups;
   Map<String, List<String>> filterCategories = new Map<String, List<String>>();
-  List<FilterCategory> categoryCache;
+  List<Category> categoryCache;
   String currentCategory;
 
   Future<List<Widget>> getSelectedTags() async {
@@ -45,20 +44,20 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
   }
 
   Future<List<Widget>> getSearchResults() async {
-    if (categoryCache == null) categoryCache = await search.getFilters();
-    List<FilterCategory> filterCategoriesLocal = new List.from(categoryCache);
-    FilterCategory category = filterCategoriesLocal.firstWhere((element) => element.name == currentCategory, orElse: () => null);
+    if (categoryCache == null) categoryCache = await search.getCategories();
+    List<Category> filterCategoriesLocal = new List.from(categoryCache);
+    Category category = filterCategoriesLocal.firstWhere((element) => element.name == currentCategory, orElse: () => null);
     if (category == null) return [];
 
-    List<SearchFilter> filters = new List.from(category.filters);
+    List<Filter> filters = new List.from(category.filters);
     filters.removeWhere((filter) => !filterCategories[category.value].any((currentselectedcategory) => currentselectedcategory.startsWith(filter.dataParam + filter.dataPrefix)));
-    List<SearchFilter> newFilters = [];
+    List<Filter> newFilters = [];
     filters.forEach((filter) {
       Map<String, String> selectedOptions = new Map<String, String>();
       filter.options.forEach((key, value) {
         if (filterCategories[category.value].any((element) => element.endsWith(key + value))) selectedOptions[key] = value;
       });
-      SearchFilter newFilter = new SearchFilter(filter.dataName, filter.dataParam, filter.dataPrefix);
+      Filter newFilter = new Filter(filter.dataName, filter.dataParam, filter.dataPrefix);
       newFilter.options = selectedOptions;
       newFilters.add(newFilter);
       //filter.options.removeWhere((key, value) => !filterCategories[category.value].any((element) => element.endsWith(key + value)))
@@ -92,8 +91,8 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
     ];
   }
 
-  Future<List<FilterCategory>> getEmptyFilters() async {
-    List<FilterCategory> categories = await search.getFilters();
+  Future<List<Category>> getEmptyFilters() async {
+    List<Category> categories = await search.getFilters();
     categories.forEach((element) {
       element.filters.clear();
     });
@@ -101,11 +100,11 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
   }
 
   Future<List<Widget>> getFilterChips() async {
-    List<FilterCategory> categories = (categoryCache != null) ? categoryCache : await search.getFilters();
+    List<Category> categories = (categoryCache != null) ? categoryCache : await search.getFilters();
     if (categoryCache == null) categoryCache = categories;
     List<Widget> filterRowWidgets = [];
     List<Widget> typeWidgets = [];
-    for (FilterCategory cat in categories) {
+    for (Category cat in categories) {
       if (!filterCategories.containsKey(cat.value)) filterCategories[cat.value] = [];
       typeWidgets.add(Padding(
           padding: const EdgeInsets.only(left: 8),
@@ -120,7 +119,7 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
             },
           )));
       if (cat.name == currentCategory) {
-        for (SearchFilter filter in cat.filters) {
+        for (Filter filter in cat.filters) {
           List<Widget> filterWidgets = [];
           filter.options.forEach((key, optValue) {
             filterWidgets.add(Padding(
@@ -230,5 +229,10 @@ class _ScheduleSearchPageState extends State<ScheduleSearchPage> {
                 }),
           ],
         )));
+  }*/
+
+  @override
+  Widget build(BuildContext context) {
+    return Text("Temporarily disabled");
   }
 }

@@ -1,10 +1,11 @@
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:timeedit/models/link_list.dart';
-import 'package:timeedit/models/organization.dart';
-import 'package:timeedit/models/schedule.dart';
-import 'package:timeedit/models/date_range.dart';
+import 'package:timeedit/objects/absolute_date.dart';
+import 'package:timeedit/objects/relative_date.dart';
+import 'package:timeedit/objects/timeedit_date.dart';
+import 'package:timeedit/objects/user_schedule.dart';
+import 'package:timeedit/utilities/schedule_builder.dart';
 import 'package:timeeditparser_flutter/screens/itemSelectPage.dart';
 import 'package:timeeditparser_flutter/screens/orgSearchPage.dart';
 import 'package:timeeditparser_flutter/screens/pathSelectionPage.dart';
@@ -15,26 +16,21 @@ import 'package:timeeditparser_flutter/widgets/subMenuButton.dart';
 import '../models/entryPathSelector.dart';
 import '../models/schedulePathSelector.dart';
 
-enum RangeType {
-  datetime,
-}
-
 class ScheduleModifyPage extends StatefulWidget {
-  ScheduleModifyPage({@required this.newSchedule, this.editedSchedule});
+  ScheduleModifyPage({@required this.newBuilder, this.editedBuilder});
 
-  final bool newSchedule;
-  final Schedule editedSchedule;
+  final bool newBuilder;
+  final ScheduleBuilder editedBuilder;
 
   @override
-  _ScheduleModifyPageState createState() => _ScheduleModifyPageState(newSchedule: newSchedule, editedSchedule: editedSchedule);
+  _ScheduleModifyPageState createState() => _ScheduleModifyPageState(newBuilder: newBuilder, editedBuilder: editedBuilder);
 }
 
 class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
-  _ScheduleModifyPageState({@required this.newSchedule, this.editedSchedule});
-  final bool newSchedule;
-  Schedule editedSchedule;
-  Organization currentOrg;
-  LinkList currentEntrance;
+  _ScheduleModifyPageState({@required this.newBuilder, this.editedBuilder});
+  final bool newBuilder;
+  ScheduleBuilder editedBuilder;
+  String customName;
   String startType;
   String startRel;
   String endType;
@@ -42,30 +38,31 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
   @override
   Widget build(BuildContext context) {
     //editedSchedule ??= new Schedule();
-    currentOrg ??= (editedSchedule.orgName != null) ? Organization(orgName: editedSchedule.orgName) : null;
-    currentEntrance ??= (editedSchedule.orgName != null) ? LinkList(entryPath: editedSchedule.entryPath, orgName: editedSchedule.orgName, description: '', name: '') : null;
 
     if (startType == null || endType == null) {
-      switch (editedSchedule.range.rangeStartType) {
-        case RelativeUnit.now:
-          startType = "now";
-          break;
-        case RelativeUnit.setDate:
+      switch (editedBuilder.startDate.runtimeType) {
+        //case RelativeUnit.now:
+        //  startType = "now";
+        //  break;
+        case TimeEditAbsoluteDate:
           startType = "set";
           break;
+        case TimeEditRelativeDate:
         default:
           startType = "rel";
-          startRel = DateRange.relToString(editedSchedule.range.rangeStartType);
+          startRel = editedBuilder.startDate.toString();
+          //startRel = DateRange.relToString(editedBuilder.startDate);
           break;
       }
 
-      switch (editedSchedule.range.rangeEndType) {
-        case RelativeUnit.setDate:
+      switch (editedBuilder.endDate.runtimeType) {
+        case TimeEditAbsoluteDate:
           endType = "set";
           break;
+        case TimeEditRelativeDate:
         default:
           endType = "rel";
-          endRel = DateRange.relToString(editedSchedule.range.rangeEndType);
+          endRel = editedBuilder.startDate.toString();
           break;
       }
     }
@@ -73,7 +70,7 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
     // WillPopScope for returning data to invoking Widget
     return WillPopScope(
         onWillPop: () {
-          Navigator.pop(context, editedSchedule);
+          Navigator.pop(context, editedBuilder);
           return;
         },
         child: Scaffold(
@@ -83,29 +80,29 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: TextField(
-                  controller: new TextEditingController(text: editedSchedule.userCustomName),
+                  controller: new TextEditingController(text: customName),
                   onSubmitted: (value) {
-                    editedSchedule.userCustomName = value;
+                    customName = value;
                     setState(() {});
                   },
                 )),
             Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Location")),
             // Schedule path submenu
             SubMenuButton(
-              title: Text("${editedSchedule.orgName}"),
+              title: Text(editedBuilder.org),
               onPressed: () => _editLocation(context),
             ),
             Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Entrance")),
             SubMenuButton(
-              title: Text("${(editedSchedule.entryPath == null) ? '(Unset)' : editedSchedule.entryPath}"),
+              title: Text((editedBuilder.entry == null) ? '(Unset)' : editedBuilder.entry),
               onPressed: () => _editEntry(context),
-              disabled: editedSchedule.orgName == null,
+              disabled: editedBuilder.entry == null,
             ),
             Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Name")),
             SubMenuButton(
-              title: Text("${(editedSchedule.schedulePath == null) ? '(Unset)' : editedSchedule.schedulePath}"),
+              title: Text("${(editedBuilder.entry == null) ? '(Unset)' : editedBuilder.entry}"),
               onPressed: () => _editSchedulePath(context),
-              disabled: editedSchedule.entryPath == null,
+              disabled: editedBuilder.entry == null,
             ),
             Padding(padding: const EdgeInsets.all(8), child: Text("Schedule Objects")),
             // Schedule objects selection submenu
@@ -114,19 +111,19 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
             SubMenuButton(
               title: Text("Categories"),
               onPressed: () => _scheduleSearch(context),
-              disabled: editedSchedule.schedulePath == null,
+              //disabled: editedSchedule.url == null,
             ),
             // Schedule columns submenu
             SubMenuButton(
               title: Text("Schedule columns"),
               onPressed: () => _editColumns(context),
-              disabled: editedSchedule.schedulePath == null,
+              //disabled: editedSchedule.url == null,
             ),
             // Schedule filters submenu
             SubMenuButton(
               title: Text("Schedule filters"),
               onPressed: () => _editFilters(context),
-              disabled: editedSchedule.schedulePath == null,
+              //disabled: editedSchedule.url == null,
             ),
 
             // Setting time range
@@ -177,13 +174,13 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                             startType = value;
                             switch (value) {
                               case "now":
-                                editedSchedule.range.rangeStartType = RelativeUnit.now;
+                                editedBuilder.startDate = TimeEditRelativeDate(length: 0);
                                 break;
                               case "rel":
-                                editedSchedule.range.rangeStartType = RelativeUnit.weeks;
+                                editedBuilder.startDate = TimeEditRelativeDate();
                                 break;
                               case "set":
-                                editedSchedule.range.rangeStartType = RelativeUnit.setDate;
+                                editedBuilder.startDate = TimeEditAbsoluteDate();
                                 break;
                             }
                             setState(() {});
@@ -199,9 +196,10 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                               Padding(padding: const EdgeInsets.only(right: 8), child: Text("Starting at")),
                               Flexible(
                                   child: TextField(
-                                      controller: new TextEditingController(text: editedSchedule.range.relativeStart.toString()),
+                                      controller: new TextEditingController(text: editedBuilder.startDate.toString()),
                                       onSubmitted: (value) {
-                                        editedSchedule.range.relativeStart = int.parse(value);
+                                        // TODO: Fix this
+                                        //editedBuilder.startDate = int.parse(value);
                                       },
                                       keyboardType: TextInputType.number,
                                       inputFormatters: <TextInputFormatter>[
@@ -257,7 +255,8 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                                     ],
                                     onChanged: (String value) {
                                       startRel = value;
-                                      editedSchedule.range.rangeEndType = DateRange.stringToRel(value);
+                                      // TODO: Proper date parsing
+                                      editedBuilder.endDate = TimeEditRelativeDate();
                                       setState(() {});
                                     },
                                   ))
@@ -270,11 +269,11 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                               Padding(padding: const EdgeInsets.only(right: 8), child: Text("Starting at")),
                               Flexible(
                                   child: DateTimePicker(
-                                initialValue: editedSchedule.range.rangeStart.toString(),
+                                initialValue: editedBuilder.startDate.toString(),
                                 firstDate: DateTime(2000),
                                 lastDate: DateTime(2100),
                                 dateLabelText: 'Date',
-                                onChanged: (val) => editedSchedule.range.rangeStart = DateTime.parse(val),
+                                onChanged: (val) => editedBuilder.startDate = TimeEditAbsoluteDate.fromDateTime(DateTime.parse(val)),
                                 validator: (val) {
                                   print(val);
                                   return null;
@@ -322,10 +321,10 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                             endType = value;
                             switch (value) {
                               case "rel":
-                                editedSchedule.range.rangeEndType = RelativeUnit.weeks;
+                                editedBuilder.endDate = TimeEditRelativeDate();
                                 break;
                               case "set":
-                                editedSchedule.range.rangeEndType = RelativeUnit.setDate;
+                                editedBuilder.endDate = TimeEditAbsoluteDate();
                                 break;
                             }
                             setState(() {});
@@ -341,9 +340,10 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                               Padding(padding: const EdgeInsets.only(right: 8), child: Text("Ending in")),
                               Flexible(
                                   child: TextField(
-                                      controller: new TextEditingController(text: editedSchedule.range.relativeEnd.toString()),
+                                      controller: new TextEditingController(text: editedBuilder.endDate.toString()),
                                       onSubmitted: (value) {
-                                        editedSchedule.range.relativeEnd = int.parse(value);
+                                        // TODO: Persist type
+                                        editedBuilder.endDate = TimeEditRelativeDate(length: int.parse(value));
                                       },
                                       keyboardType: TextInputType.number,
                                       inputFormatters: <TextInputFormatter>[
@@ -399,7 +399,7 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                                     ],
                                     onChanged: (String value) {
                                       endRel = value;
-                                      editedSchedule.range.rangeEndType = DateRange.stringToRel(value);
+                                      editedBuilder.endDate = TimeEditRelativeDate(type: RelativeDateType.fromString(value));
                                       setState(() {});
                                     },
                                   ))
@@ -412,11 +412,11 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
                               Padding(padding: const EdgeInsets.only(right: 8), child: Text("Ending at")),
                               Flexible(
                                   child: DateTimePicker(
-                                initialValue: editedSchedule.range.rangeEnd.toString(),
+                                initialValue: editedBuilder.endDate.toString(),
                                 firstDate: DateTime(2000),
                                 lastDate: DateTime(2100),
                                 dateLabelText: 'Date',
-                                onChanged: (val) => editedSchedule.range.rangeEnd = DateTime.parse(val),
+                                onChanged: (val) => editedBuilder.endDate = TimeEditAbsoluteDate.fromDateTime(DateTime.parse(val)),
                                 validator: (val) {
                                   print(val);
                                   return null;
@@ -431,7 +431,7 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
 
   Future<bool> validLink() async {
     try {
-      editedSchedule.headers = await editedSchedule.getHeaders();
+      await editedBuilder.getSchedule();
       return true;
     } catch (_) {
       return false;
@@ -446,10 +446,10 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
               appBar: AppBar(
                 title: Text("Search Objects"),
               ),
-              body: ScheduleSearchPage(schedule: editedSchedule))),
+              body: ScheduleSearchPage(builder: editedBuilder))),
     );
 
-    editedSchedule = (result is Schedule) ? result : editedSchedule;
+    editedBuilder = (result is ScheduleBuilder) ? result : editedBuilder;
   }
 
   _editColumns(BuildContext context) async {
@@ -460,10 +460,10 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
               appBar: AppBar(
                 title: Text("Schedule Columns"),
               ),
-              body: ScheduleColumnsPage(editedSchedule: editedSchedule))),
+              body: ScheduleColumnsPage(editedBuilder: editedBuilder))),
     );
 
-    editedSchedule = (result is Schedule) ? result : editedSchedule;
+    editedBuilder = (result is ScheduleBuilder) ? result : editedBuilder;
   }
 
   _editFilters(BuildContext context) async {
@@ -474,20 +474,19 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
               appBar: AppBar(
                 title: Text("Schedule Filters"),
               ),
-              body: ScheduleColumnsPage(editedSchedule: editedSchedule))),
+              body: ScheduleColumnsPage(editedBuilder: editedBuilder))),
     );
 
-    editedSchedule = (result is Schedule) ? result : editedSchedule;
+    editedBuilder = (result is ScheduleBuilder) ? result : editedBuilder;
   }
 
   _editLocation(BuildContext context) async {
     final result = await showSearch(context: context, delegate: OrgSearch());
-    if (result != null && result.isNotEmpty && result != editedSchedule.orgName)
+    if (result != null && result.isNotEmpty && result != editedBuilder.org)
       setState(() {
-        editedSchedule.orgName = result;
-        editedSchedule.entryPath = null;
-        editedSchedule.schedulePath = null;
-        currentOrg = Organization(orgName: result);
+        editedBuilder.org = result;
+        editedBuilder.entry = null;
+        editedBuilder.pageId = null;
       });
   }
 
@@ -497,16 +496,15 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
         MaterialPageRoute(
             builder: (context) => PathSelectionPage(
                   selector: new EntryPathSelector(pathPrefix: [
-                    editedSchedule.orgName
+                    editedBuilder.org
                   ]),
                 )));
-    if (result != null && result.isNotEmpty && result != editedSchedule.entryPath)
+    if (result != null && result.isNotEmpty && result != editedBuilder.entry)
       setState(() {
-        editedSchedule.entryPath = result;
-        editedSchedule.schedulePath = null;
-        editedSchedule.groups?.clear();
-        editedSchedule.headers = [];
-        currentEntrance = LinkList(entryPath: result, orgName: editedSchedule.orgName, description: '', name: '');
+        editedBuilder.entry = result;
+        editedBuilder.pageId = null;
+        editedBuilder.objects?.clear();
+        //editedBuilder.headers = [];
       });
   }
 
@@ -516,13 +514,21 @@ class _ScheduleModifyPageState extends State<ScheduleModifyPage> {
         MaterialPageRoute(
             builder: (context) => PathSelectionPage(
                   selector: new SchedulePathSelector(pathPrefix: [
-                    editedSchedule.orgName,
-                    editedSchedule.entryPath
+                    editedBuilder.org,
+                    editedBuilder.entry
                   ]),
                 )));
-    if (result != null && result.isNotEmpty && result != editedSchedule.schedulePath)
+    if (result != null && result.isNotEmpty && result != editedBuilder.pageId)
       setState(() {
-        editedSchedule.schedulePath = result;
+        editedBuilder.pageId = result;
       });
+  }
+
+  ScheduleBuilder createBuilder() {
+    return ScheduleBuilder(editedBuilder.org, editedBuilder.entry, editedBuilder.pageId, editedBuilder.filters);
+  }
+
+  UserSchedule createSchedule() {
+    return UserSchedule(createBuilder(), customName);
   }
 }

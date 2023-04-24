@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timeedit/models/schedule.dart';
+import 'package:timeedit/utilities/schedule_builder.dart';
 import 'package:timeeditparser_flutter/screens/scheduleNewPage.dart';
 import 'package:timeeditparser_flutter/screens/scheduleModifyPage.dart';
 import 'package:timeeditparser_flutter/utilities/settings.dart' as settings;
@@ -12,25 +12,25 @@ class ScheduleListPage extends StatefulWidget {
 }
 
 class _ScheduleListPageState extends State<ScheduleListPage> {
-  List<Schedule> schedules = [];
-  Schedule currentSchedule = settings.currentSchedule;
+  List<ScheduleBuilder> builders = [];
+  ScheduleBuilder currentSchedule = settings.currentBuilder;
 
   @override
   Widget build(BuildContext context) {
-    schedules = settings.schedules;
+    builders = settings.builders;
     List<Widget> scheduleItems = [];
-    for (int i = 0; i < schedules.length; i++) {
+    for (int i = 0; i < builders.length; i++) {
       scheduleItems.add(new Card(
           elevation: 4,
           child: InkWell(
-            onTap: () => _modifySchedule(context, schedules[i], i),
-            child: Padding(child: Text(schedules[i].userCustomName, style: Theme.of(context).textTheme.headline6), padding: const EdgeInsets.only(left: 12, top: 12, bottom: 12)),
+            onTap: () => _modifySchedule(context, builders[i], i),
+            child: Padding(child: Text(/*builders[i].userCustomName*/ "TestName", style: Theme.of(context).textTheme.headline6), padding: const EdgeInsets.only(left: 12, top: 12, bottom: 12)),
           )));
       scheduleItems.add(new ElevatedButton(
           onPressed: () {
-            settings.currentSchedule = schedules[i];
+            settings.currentBuilder = builders[i];
             setState(() {
-              currentSchedule = settings.currentSchedule;
+              currentSchedule = settings.currentBuilder;
             });
           },
           child: Text("Set as main")));
@@ -39,7 +39,7 @@ class _ScheduleListPageState extends State<ScheduleListPage> {
       appBar: AppBar(
         title: Text("Schedule Management"),
         actions: [
-          IconButton(onPressed: () => _addSchedule(context), icon: const Icon(Icons.add))
+          IconButton(onPressed: () => _addBuilder(context), icon: const Icon(Icons.add))
         ],
       ),
       body: ListView(
@@ -48,8 +48,8 @@ class _ScheduleListPageState extends State<ScheduleListPage> {
           Card(
               elevation: 4,
               child: InkWell(
-                onTap: () => (currentSchedule == null) ? null : _modifyCurrentSchedule(context, settings.currentSchedule),
-                child: Padding(child: Text((currentSchedule == null) ? "No schedule" : currentSchedule.userCustomName, style: Theme.of(context).textTheme.headline6), padding: const EdgeInsets.only(left: 12, top: 12, bottom: 12)),
+                onTap: () => (currentSchedule == null) ? null : _modifyCurrentSchedule(context, settings.currentBuilder),
+                child: Padding(child: Text((currentSchedule == null) ? "No schedule" : "TestName" /*currentSchedule.userCustomName*/, style: Theme.of(context).textTheme.headline6), padding: const EdgeInsets.only(left: 12, top: 12, bottom: 12)),
               )),
           Text("Other Schedules"),
           ...scheduleItems
@@ -58,19 +58,19 @@ class _ScheduleListPageState extends State<ScheduleListPage> {
     );
   }
 
-  _addSchedule(BuildContext context) async {
+  _addBuilder(BuildContext context) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => ScheduleNewPage(newSchedule: true)),
     );
 
-    if (result is Schedule) {
-      schedules.add(result);
-      settings.schedules = schedules;
+    if (result is ScheduleBuilder) {
+      builders.add(result);
+      settings.schedules = builders;
     }
   }
 
-  _modifySchedule(BuildContext context, Schedule schedule, int schedulesIndex) async {
+  _modifySchedule(BuildContext context, ScheduleBuilder builder, int schedulesIndex) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -79,15 +79,15 @@ class _ScheduleListPageState extends State<ScheduleListPage> {
                 title: Text("Modify Schedule"),
               ),
               body: ScheduleModifyPage(
-                editedSchedule: schedule,
-                newSchedule: false,
+                editedBuilder: builder,
+                newBuilder: false,
               ))),
     );
 
-    if (result is Schedule) schedules[schedulesIndex] = result;
+    if (result is ScheduleBuilder) builders[schedulesIndex] = result;
   }
 
-  _modifyCurrentSchedule(BuildContext context, Schedule schedule) async {
+  _modifyCurrentSchedule(BuildContext context, ScheduleBuilder builder) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -96,11 +96,11 @@ class _ScheduleListPageState extends State<ScheduleListPage> {
                 title: Text("Modify Schedule"),
               ),
               body: ScheduleModifyPage(
-                editedSchedule: schedule,
-                newSchedule: false,
+                editedBuilder: builder,
+                newBuilder: false,
               ))),
     );
 
-    if (result is Schedule) settings.currentSchedule = result;
+    if (result is ScheduleBuilder) settings.currentBuilder = result;
   }
 }
