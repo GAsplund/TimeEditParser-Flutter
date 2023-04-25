@@ -6,6 +6,8 @@ class ScheduleAttrFilter extends ScheduleFilter {
 
   final String filter;
   int column;
+
+  @override
   bool match(Booking b) {
     // Perform an XOR with isBlacklist to invert match
     return isBlacklist ^ (b.headersData[column] == filter);

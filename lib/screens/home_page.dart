@@ -3,34 +3,31 @@ import 'package:timeedit_parser/screens/settings_page.dart';
 import 'package:timeedit_parser/utilities/theming.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({required this.theming});
+  const HomePage({super.key, required this.theming});
   final Theming theming;
 
   @override
-  _HomePageState createState() => _HomePageState(theming: this.theming);
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  _HomePageState({required this.theming});
-  final Theming theming;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Home"),
+          title: const Text("Home"),
           actions: [
             IconButton(
                 onPressed: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SettingsPage(theming: theming)),
+                      MaterialPageRoute(builder: (context) => SettingsPage(theming: widget.theming)),
                     ),
                 icon: const Icon(Icons.settings))
           ],
         ),
         body: ListView(children: [
           Text("Hello, Gustaf!", style: Theme.of(context).textTheme.headlineMedium),
-          Text("Today, there are 0 bookings.")
+          const Text("Today, there are 0 bookings.")
         ]));
   }
 }

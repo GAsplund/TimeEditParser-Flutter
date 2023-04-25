@@ -7,13 +7,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
-  runApp(TimeEditParser());
+  runApp(const TimeEditParser());
   settings.getSettings();
 }
 
 class TimeEditParser extends StatelessWidget {
-  @override
-  // This widget is the root of your application.
+  const TimeEditParser({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<Theming>(
@@ -27,7 +27,7 @@ class TimeEditParser extends StatelessWidget {
                       brightness: Brightness.dark, primarySwatch: Colors.orange, scaffoldBackgroundColor: Colors.black),
                   themeMode: model.getCurrentTheme(),
                   home: MainPage(theming: model),
-                  localizationsDelegates: [
+                  localizationsDelegates: const [
                     AppLocalizations.delegate,
                     GlobalMaterialLocalizations.delegate,
                     GlobalWidgetsLocalizations.delegate,

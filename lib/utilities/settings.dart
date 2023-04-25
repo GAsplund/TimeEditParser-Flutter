@@ -30,7 +30,9 @@ List<ScheduleBuilder> get builders {
 
 set schedules(List<ScheduleBuilder> newBuilders) {
   List<String> buildersJson = [];
-  for (ScheduleBuilder builder in newBuilders) buildersJson.add(builder.toJson());
+  for (ScheduleBuilder builder in newBuilders) {
+    buildersJson.add(builder.toJson());
+  }
   prefs?.setString("schedules", jsonEncode(buildersJson));
   _builders = newBuilders;
 }

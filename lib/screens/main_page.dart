@@ -7,17 +7,15 @@ import 'home_page.dart';
 import 'schedule_page.dart';
 
 class MainPage extends StatefulWidget {
-  MainPage({required this.theming});
+  const MainPage({super.key, required this.theming});
 
   final Theming theming;
 
   @override
-  _MainPageState createState() => _MainPageState(theming: theming);
+  State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  _MainPageState({required this.theming});
-  Theming theming;
   List<Widget> _widgetOptions = [];
 
   int _selectedIndex = 0;
@@ -25,11 +23,11 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     _widgetOptions = <Widget>[
       HomePage(
-        theming: theming,
+        theming: widget.theming,
       ),
-      SchedulePage(),
-      SchedulePage(),
-      SchedulePage()
+      const SchedulePage(),
+      const SchedulePage(),
+      const SchedulePage()
     ];
     super.initState();
   }

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:timeedit/objects/booking.dart';
 
@@ -22,6 +21,6 @@ class Notification {
 
       events.add({"TYPE": EventType.end.index, "TIME": booking.endTime.millisecondsSinceEpoch});
     }
-    await _channel.invokeMethod('setNotifcSchedule', events);
+    await _channel.invokeMethod('setNotifSchedule', events);
   }
 }

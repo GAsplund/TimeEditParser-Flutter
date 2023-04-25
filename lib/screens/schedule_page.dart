@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class SchedulePage extends StatefulWidget {
-  SchedulePage();
+  const SchedulePage({super.key});
 
   @override
-  _SchedulePageState createState() => _SchedulePageState();
+  State<SchedulePage> createState() => _SchedulePageState();
 }
 
 class _SchedulePageState extends State<SchedulePage> {
@@ -12,8 +12,8 @@ class _SchedulePageState extends State<SchedulePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         //backgroundColor: Color.fromARGB(255, 230, 230, 230),
-        appBar: AppBar(title: Text("Schedule")),
+        appBar: AppBar(title: const Text("Schedule")),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: Text("Placeholder"));
+        body: const Text("Placeholder"));
   }
 }
