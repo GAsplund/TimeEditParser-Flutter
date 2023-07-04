@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timeedit_parser/utilities/settings.dart' as settings;
 import 'package:timeedit_parser/utilities/theming.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key, required this.theming});
@@ -12,6 +13,30 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  String? _version = "";
+  String? _buildNumber = "";
+  String? _appName = "";
+
+  void _getAppVersion() async {
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    final version = packageInfo.version;
+    final buildNumber = packageInfo.buildNumber;
+    final appName = packageInfo.appName;
+
+    setState(() {
+      _version = version;
+      _buildNumber = buildNumber;
+      _appName = appName;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getAppVersion();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,13 +45,6 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
         body: ListView(children: [
           const Text("Settings"),
-          /*SwitchListTile(
-        value: true,
-        title: Text(
-          "Dark Theme",
-        ),
-        onChanged: (bool value) {},
-      ),*/
           ListTile(
             title: const Text("Theme"),
             trailing: DropdownButton(
@@ -67,7 +85,13 @@ class _SettingsPageState extends State<SettingsPage> {
                 setState(() {});
               },
             ),
-          )
+          ),
+          // About
+          const Text("About"),
+          ListTile(
+            title: const Text("Version"),
+            subtitle: Text("$_appName $_version+$_buildNumber"),
+          ),
         ]));
   }
 }
