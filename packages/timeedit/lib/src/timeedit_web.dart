@@ -20,7 +20,7 @@ class TimeEditWeb {
   }
 
   static String getScheduleURL(String org, String entry, int pageId, List<String> objects) {
-    String url = linkbase + "$org/$entry/ri.json?sid=$pageId";
+    String url = linkbase + "$org/web/$entry/ri.json?sid=$pageId";
 
     // Add schedule objects
     url += "&objects=";
@@ -35,7 +35,8 @@ class TimeEditWeb {
   /// Gets a list of schedule objects at [org]/[entry]/[pageId].
   ///
   /// Returns a list of [ScheduleObject] that are the schedule objects.
-  static Future<List<ScheduleObject>> getObjects(String org, String entry, int pageId, List<int> types, List<String> filters) async {
+  static Future<List<ScheduleObject>> getObjects(
+      String org, String entry, int pageId, List<int> types, List<String> filters) async {
     String url = linkbase + "$org/$entry/objects.html?sid=$pageId&partajax=t";
     List<ScheduleObject> objects = [];
 

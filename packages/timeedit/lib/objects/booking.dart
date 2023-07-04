@@ -5,4 +5,8 @@ class Booking {
   String id;
 
   Booking(this.headersData, this.startTime, this.endTime, this.id);
+
+  factory Booking.fromJson(Map<String, dynamic> json) {
+    return Booking(json["columns"], DateTime.parse(json["startdate"]), DateTime.parse(json["enddate"]), json["id"]);
+  }
 }

@@ -8,7 +8,13 @@ import 'package:timeedit_parser/utilities/theming.dart';
 SharedPreferences? prefs;
 Future<void> getSettings() async {
   prefs = await SharedPreferences.getInstance();
-  _currentBuilder = ScheduleBuilder.fromJson(json.decode(prefs?.getString("currentSchedule") ?? "{}"));
+  String? settingsJson = prefs?.getString("currentSchedule");
+
+  if (settingsJson != null) {
+    _currentBuilder = ScheduleBuilder.fromJson(json.decode(settingsJson));
+  } else {
+    _currentBuilder = ScheduleBuilder("demo_gdpr", "public01", 3, []);
+  }
 
   _builders = [];
   try {

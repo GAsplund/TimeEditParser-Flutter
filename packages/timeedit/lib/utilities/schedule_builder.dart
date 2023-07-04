@@ -5,6 +5,8 @@ import 'package:timeedit/objects/schedule.dart';
 import 'package:timeedit/objects/timeedit_date.dart';
 import 'package:timeedit/src/timeedit_web.dart';
 
+import '../objects/booking.dart';
+
 /// A class for building a [Schedule].
 /// Represents a "schedule search" page in TimeEdit.
 class ScheduleBuilder {
@@ -33,7 +35,9 @@ class ScheduleBuilder {
 
   Future<Schedule> getSchedule() async {
     Map<String, dynamic> json = await TimeEditWeb.getSchedule(org, entry, pageId, objects);
-    return Schedule("", json["columnheaders"], json["reservations"], startDate, endDate, org, entry, "");
+    List<String> columnHeaders = (json["columnheaders"] as List<dynamic>).cast();
+    List<Booking> reservations = (json["reservations"] as List<dynamic>).map((e) => Booking.fromJson(e)).toList();
+    return Schedule("", columnHeaders, reservations, startDate, endDate, org, entry, "");
   }
 
   String getURL() {
