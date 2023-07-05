@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timeedit_parser/screens/manage_page.dart';
 //import 'package:timeeditparser_flutter/screens/schedule_list_page.dart';
 //import 'package:timeeditparser_flutter/screens/testing_page.dart';
 import 'package:timeedit_parser/utilities/theming.dart';
@@ -26,7 +27,7 @@ class _MainPageState extends State<MainPage> {
         theming: widget.theming,
       ),
       const SchedulePage(),
-      const SchedulePage(),
+      const ManagePage(),
       const SchedulePage()
     ];
     super.initState();

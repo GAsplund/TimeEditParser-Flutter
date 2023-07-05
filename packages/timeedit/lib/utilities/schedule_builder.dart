@@ -10,7 +10,7 @@ import '../objects/booking.dart';
 /// A class for building a [Schedule].
 /// Represents a "schedule search" page in TimeEdit.
 class ScheduleBuilder {
-  TimeEditDate startDate = TimeEditRelativeDate(type: RelativeDateType.week, length: 0);
+  TimeEditDate startDate = TimeEditRelativeDate(length: 0);
   TimeEditDate endDate = TimeEditRelativeDate();
 
   List<FilterQuery> filters = [];
