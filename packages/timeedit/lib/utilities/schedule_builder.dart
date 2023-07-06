@@ -2,6 +2,7 @@ import 'package:timeedit/objects/category.dart';
 import 'package:timeedit/objects/filter_query.dart';
 import 'package:timeedit/objects/relative_date.dart';
 import 'package:timeedit/objects/schedule.dart';
+import 'package:timeedit/objects/schedule_object.dart';
 import 'package:timeedit/objects/timeedit_date.dart';
 import 'package:timeedit/src/timeedit_web.dart';
 
@@ -14,7 +15,7 @@ class ScheduleBuilder {
   TimeEditDate endDate = TimeEditRelativeDate();
 
   List<FilterQuery> filters = [];
-  List<String> objects = [];
+  List<ScheduleObject> objects = [];
 
   /// The organization name.
   String org;
@@ -27,8 +28,12 @@ class ScheduleBuilder {
 
   ScheduleBuilder(this.org, this.entry, this.pageId, this.filters);
 
-  List<Category> getCategories() {
-    return [];
+  Future<List<Category>> getCategories() async {
+    return await TimeEditWeb.getCategories(org, entry, pageId);
+  }
+
+  Future<List<ScheduleObject>> getObjects(List<int> types) async {
+    return await TimeEditWeb.getObjects(org, entry, pageId, types, []);
   }
 
   addFilterQuery(FilterQuery fq) {}

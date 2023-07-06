@@ -15,16 +15,17 @@ class TimeEditWeb {
   /// using [objects] as filters.
   ///
   /// Returns a JSON object with the schedule.
-  static Future<Map<String, dynamic>> getSchedule(String org, String entry, int pageId, List<String> objects) async {
+  static Future<Map<String, dynamic>> getSchedule(
+      String org, String entry, int pageId, List<ScheduleObject> objects) async {
     return await _getURLJSON(getScheduleURL(org, entry, pageId, objects));
   }
 
-  static String getScheduleURL(String org, String entry, int pageId, List<String> objects) {
+  static String getScheduleURL(String org, String entry, int pageId, List<ScheduleObject> objects) {
     String url = linkbase + "$org/web/$entry/ri.json?sid=$pageId";
 
     // Add schedule objects
     url += "&objects=";
-    for (String obj in objects) {
+    for (ScheduleObject obj in objects) {
       url += "$obj,";
     }
     url = url.substring(0, url.length - 1);
@@ -37,7 +38,7 @@ class TimeEditWeb {
   /// Returns a list of [ScheduleObject] that are the schedule objects.
   static Future<List<ScheduleObject>> getObjects(
       String org, String entry, int pageId, List<int> types, List<String> filters) async {
-    String url = linkbase + "$org/$entry/objects.html?sid=$pageId&partajax=t";
+    String url = linkbase + "$org/web/$entry/objects.html?sid=$pageId&partajax=t";
     List<ScheduleObject> objects = [];
 
     // Add types
@@ -52,14 +53,12 @@ class TimeEditWeb {
     dom.Document document = await _getURLDOM(url);
 
     // Get all objects
-    dom.Element? list = document.querySelector(".searchObject");
-    if (list != null) {
-      for (dom.Element element in list.children) {
-        String id = element.attributes["data-id"]!;
-        String name = element.attributes["data-name"]!;
-        String type = element.attributes["data-type"]!;
-        objects.add(ScheduleObject(id, name, type));
-      }
+    List<dom.Element> list = document.querySelectorAll(".searchObject");
+    for (dom.Element element in list) {
+      String id = element.attributes["data-id"]!;
+      String name = element.attributes["data-name"]!;
+      String type = element.attributes["data-type"]!;
+      objects.add(ScheduleObject(name, id, type));
     }
 
     return objects;
@@ -69,8 +68,18 @@ class TimeEditWeb {
   ///
   /// Returns a list of [Category] objects.
   static Future<List<Category>> getCategories(String org, String entry, int pageId) async {
-    String url = linkbase + "$org/$entry/ri.html?sid=$pageId&objects=0";
-    return [];
+    String url = linkbase + "$org/web/$entry/ri.html?sid=$pageId&objects=0";
+    dom.Document document = await _getURLDOM(url);
+    List<Category> categories = [];
+
+    dom.Element? selector = document.querySelector("#fancytypeselector");
+    if (selector != null) {
+      for (dom.Element element in selector.children) {
+        Category category = Category(int.parse(element.attributes["value"]!), element.text);
+        categories.add(category);
+      }
+    }
+    return categories;
   }
 
   /// Gets a list of page ids on [org]/[entry]

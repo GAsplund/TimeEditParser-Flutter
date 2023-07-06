@@ -16,9 +16,9 @@ class _ManagePageState extends State<ManagePage> {
       appBar: AppBar(title: const Text("Manage Schedules")),
       body: Column(
         children: [
-          Text("Current schedule", style: Theme.of(context).textTheme.headline6),
+          Text("Current schedule", style: Theme.of(context).textTheme.titleLarge),
           ScheduleBuilderCard(builder: currentBuilder),
-          Text("Saved schedules", style: Theme.of(context).textTheme.headline6),
+          Text("Saved schedules", style: Theme.of(context).textTheme.titleLarge),
           Expanded(
             child: ListView.builder(
               itemCount: builders.length,
