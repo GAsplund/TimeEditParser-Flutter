@@ -7,6 +7,7 @@ import 'package:timeedit/objects/category.dart';
 import 'package:timeedit/objects/org_entry.dart';
 import 'package:timeedit/objects/page_entry.dart';
 import 'package:timeedit/objects/schedule_object.dart';
+import 'package:timeedit/utilities/org_start.dart';
 
 const linkbase = "https://cloud.timeedit.net/";
 
@@ -27,7 +28,7 @@ class TimeEditWeb {
     // Add schedule objects
     url += "&objects=";
     for (ScheduleObject obj in objects) {
-      url += "$obj,";
+      url += "${obj.id},";
     }
     url = url.substring(0, url.length - 1);
 
@@ -102,7 +103,9 @@ class TimeEditWeb {
     dom.Document document = await _getURLDOM(url);
 
     dom.Element? selector = document.querySelector("select#f0");
-    for (dom.Element element in selector!.children) {
+    if (selector == null) return pages;
+
+    for (dom.Element element in selector.children) {
       String value = element.attributes["value"]!;
       String name = element.text.substring(value.length + 2);
       pages.add(PageEntry(entry, int.parse(value), name, ""));
@@ -113,9 +116,11 @@ class TimeEditWeb {
   /// Gets a list of organisations given a [query] search.
   ///
   /// Returns a JSON object with the organisation results.
-  static Future<List<dynamic>> searchOrgs(String query) async {
+  static Future<List<OrgStart>> searchOrgs(String query) async {
+    if (query.isEmpty) return [];
+
     String url = "https://www.timeedit.net/v1/search/web?term=$query";
-    return await _getURLJSON(url);
+    return (await _getURLJSON(url)).map<OrgStart>((e) => OrgStart.fromJSON(e)).toList();
   }
 
   /// Gets a list of entries on [org]
