@@ -5,6 +5,7 @@ import 'package:html/parser.dart' as parser;
 import 'package:html/dom.dart' as dom;
 import 'package:timeedit/objects/category.dart';
 import 'package:timeedit/objects/org_entry.dart';
+import 'package:timeedit/objects/page_entry.dart';
 import 'package:timeedit/objects/schedule_object.dart';
 
 const linkbase = "https://cloud.timeedit.net/";
@@ -35,10 +36,11 @@ class TimeEditWeb {
 
   /// Gets a list of schedule objects at [org]/[entry]/[pageId].
   ///
-  /// Returns a list of [ScheduleObject] that are the schedule objects.
+  /// Returns a list of up to 100 [ScheduleObject] that are the schedule objects.
   static Future<List<ScheduleObject>> getObjects(
-      String org, String entry, int pageId, List<int> types, List<String> filters) async {
-    String url = linkbase + "$org/web/$entry/objects.html?sid=$pageId&partajax=t";
+      String org, String entry, int pageId, List<int> types, List<String> filters,
+      {int max = 100, int start = 0}) async {
+    String url = linkbase + "$org/web/$entry/objects.html?sid=$pageId&partajax=t&max=$max&start=$start";
     List<ScheduleObject> objects = [];
 
     // Add types
@@ -64,6 +66,14 @@ class TimeEditWeb {
     return objects;
   }
 
+  /// Lazily gets a list of organisations given a [query] search.
+  ///
+  /// Returns a JSON object with the organisation results.
+  static Future<Map<String, dynamic>> getObjectsLazy(String query, int start, int max) async {
+    String url = "https://www.timeedit.net/v1/search/web?term=$query&start=$start&max=$max";
+    return await _getURLJSON(url);
+  }
+
   /// Gets all available categories from [org]/[entry]/[pageId]
   ///
   /// Returns a list of [Category] objects.
@@ -85,22 +95,32 @@ class TimeEditWeb {
   /// Gets a list of page ids on [org]/[entry]
   ///
   /// Returns a list of [int] that are the page ids.
-  static Future<List<int>> getPageIds(String org, String entry) async {
-    String url = linkbase + "$org/$entry/s.html";
-    return [];
+  static Future<List<PageEntry>> getPageIds(String org, String entry) async {
+    String url = linkbase + "$org/web/$entry/s.html";
+    List<PageEntry> pages = [];
+
+    dom.Document document = await _getURLDOM(url);
+
+    dom.Element? selector = document.querySelector("select#f0");
+    for (dom.Element element in selector!.children) {
+      String value = element.attributes["value"]!;
+      String name = element.text.substring(value.length + 2);
+      pages.add(PageEntry(entry, int.parse(value), name, ""));
+    }
+    return pages;
   }
 
   /// Gets a list of organisations given a [query] search.
   ///
   /// Returns a JSON object with the organisation results.
-  static Future<Map<String, dynamic>> searchOrgs(String query) async {
+  static Future<List<dynamic>> searchOrgs(String query) async {
     String url = "https://www.timeedit.net/v1/search/web?term=$query";
     return await _getURLJSON(url);
   }
 
   /// Gets a list of entries on [org]
   static Future<List<OrgEntry>> getEntries(String org) async {
-    String url = linkbase + "$org/s.html";
+    String url = linkbase + "$org/web";
     List<OrgEntry> entries = [];
 
     // Get HTML
@@ -110,11 +130,13 @@ class TimeEditWeb {
     dom.Element? list = document.querySelector("#entrylist");
     if (list != null) {
       for (dom.Element entry in list.children) {
-        String name = entry.querySelector("a")!.text;
+        String name = entry.text;
         String description = entry.querySelector("span")!.text;
-        String link = entry.querySelector("a")!.attributes["href"]!;
+        List<String> pathSplit = entry.attributes["href"]!.split("/");
+        String path = pathSplit[pathSplit.length - 2];
         bool isLocked = entry.querySelector("img") != null;
-        entries.add(OrgEntry(name, description, link, isLocked));
+
+        entries.add(OrgEntry(org, path, name, description, isLocked));
       }
     }
 
@@ -130,7 +152,7 @@ class TimeEditWeb {
     return parser.parse(await _getURLRaw(url));
   }
 
-  static Future<Map<String, dynamic>> _getURLJSON(String url) async {
+  static Future<dynamic> _getURLJSON(String url) async {
     return jsonDecode(await _getURLRaw(url));
   }
 }
