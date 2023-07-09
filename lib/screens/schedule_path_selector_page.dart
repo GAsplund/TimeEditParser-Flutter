@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:timeedit_parser/screens/org_entry_selector_page.dart';
 import 'package:timeedit_parser/screens/org_search_page.dart';
+import 'package:timeedit_parser/screens/page_id_selector_page.dart';
 
 class SchedulePathSelectorPage extends StatefulWidget {
-  SchedulePathSelectorPage({super.key, required this.org, required this.entry, required this.pageId});
+  SchedulePathSelectorPage(
+      {super.key, required this.org, required this.entry, required this.pageId, this.onPathSelected});
 
   final String org;
   final String entry;
   final int pageId;
+  final Function(String, String, int)? onPathSelected;
 
   @override
   _SchedulePathSelectorPageState createState() => _SchedulePathSelectorPageState();
@@ -29,7 +33,17 @@ class _SchedulePathSelectorPageState extends State<SchedulePathSelectorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Select path")),
+      appBar: AppBar(
+        title: const Text("Edit path"),
+        actions: [
+          IconButton(
+              onPressed: () => {
+                    if (widget.onPathSelected != null) {widget.onPathSelected!(org!, entry!, pageId!)},
+                    Navigator.pop(context)
+                  },
+              icon: const Icon(Icons.check, color: Colors.white))
+        ],
+      ),
       body: Column(
         children: [
           // Org
@@ -37,7 +51,8 @@ class _SchedulePathSelectorPageState extends State<SchedulePathSelectorPage> {
               child: ListTile(
             title: const Text("Organization"),
             subtitle: Text(org ?? ""),
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrgSearchPage())),
+            onTap: () =>
+                Navigator.push(context, MaterialPageRoute(builder: (context) => OrgSearchPage(onOrgSelected: setOrg))),
           )),
           // Entry
           Card(
@@ -47,8 +62,7 @@ class _SchedulePathSelectorPageState extends State<SchedulePathSelectorPage> {
             onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        SchedulePathSelectorPage(org: widget.org, entry: widget.entry, pageId: widget.pageId))),
+                    builder: (context) => OrgEntrySelectorPage(org: org!, entry: entry, onEntrySelected: setEntry))),
           )),
           // Page ID
           Card(
@@ -59,10 +73,31 @@ class _SchedulePathSelectorPageState extends State<SchedulePathSelectorPage> {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        SchedulePathSelectorPage(org: widget.org, entry: widget.entry, pageId: widget.pageId))),
+                        PageIdSelectorPage(org: org!, entry: entry!, pageId: pageId, onIdSelected: setPageId))),
           )),
         ],
       ),
     );
+  }
+
+  void setOrg(String org) {
+    setState(() {
+      this.org = org;
+      entry = null;
+      pageId = null;
+    });
+  }
+
+  void setEntry(String entry) {
+    setState(() {
+      this.entry = entry;
+      pageId = null;
+    });
+  }
+
+  void setPageId(int pageId) {
+    setState(() {
+      this.pageId = pageId;
+    });
   }
 }

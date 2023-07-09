@@ -4,8 +4,9 @@ import 'package:timeedit/utilities/schedule_builder.dart';
 import 'package:timeedit_parser/screens/schedule_builder_edit_page.dart';
 
 class ScheduleBuilderCard extends StatefulWidget {
-  const ScheduleBuilderCard({super.key, required this.builder});
+  const ScheduleBuilderCard({super.key, required this.builder, this.onBuilderUpdated});
 
+  final Function(ScheduleBuilder)? onBuilderUpdated;
   final ScheduleBuilder builder;
 
   @override
@@ -22,7 +23,12 @@ class _ScheduleBuilderCardState extends State<ScheduleBuilderCard> {
               title: Text(widget.builder.getURL()),
               subtitle: const Text("Test"),
               onTap: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => ScheduleBuilderEditPage(builder: widget.builder)))),
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ScheduleBuilderEditPage(
+                            builder: widget.builder,
+                            onBuilderUpdated: widget.onBuilderUpdated,
+                          )))),
         ));
   }
 }

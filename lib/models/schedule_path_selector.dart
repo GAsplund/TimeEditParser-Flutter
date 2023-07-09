@@ -1,4 +1,4 @@
-import 'package:timeedit/utilities/schedule_search_builder.dart';
+/*import 'package:timeedit/utilities/schedule_search_builder.dart';
 import 'package:timeedit_parser/models/path_selector.dart';
 
 class SchedulePathSelector extends PathSelector {
@@ -20,3 +20,4 @@ class SchedulePathSelector extends PathSelector {
     return paths;
   }
 }
+*/

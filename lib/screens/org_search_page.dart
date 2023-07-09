@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:timeedit/utilities/org_start.dart';
 
 class OrgSearchPage extends StatefulWidget {
-  const OrgSearchPage({Key? key}) : super(key: key);
+  final Function(String)? onOrgSelected;
+
+  const OrgSearchPage({super.key, this.onOrgSelected});
 
   @override
   _OrgSearchPageState createState() => _OrgSearchPageState();
@@ -21,18 +24,26 @@ class _OrgSearchPageState extends State<OrgSearchPage> {
             searchTerm = value;
           }),
         )),
-        body: FutureBuilder(builder: (context, snapshot) {
-          return ListView.builder(
-            itemCount: 2,
-            itemBuilder: (context, index) {
-              return Card(
-                child: ListTile(
-                  title: Text("Org$index"),
-                  onTap: () => Navigator.pop(context),
-                ),
+        body: FutureBuilder(
+            future: OrgStart.search(searchTerm),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    child: ListTile(
+                      title: Text(snapshot.data![index].org),
+                      onTap: () => {
+                        if (widget.onOrgSelected != null) widget.onOrgSelected!(snapshot.data![index].org),
+                        Navigator.pop(context)
+                      },
+                    ),
+                  );
+                },
               );
-            },
-          );
-        }));
+            }));
   }
 }

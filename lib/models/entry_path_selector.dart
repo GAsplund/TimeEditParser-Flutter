@@ -1,4 +1,4 @@
-import 'package:timeedit/objects/org_entry.dart';
+/*import 'package:timeedit/objects/org_entry.dart';
 import 'package:timeedit/utilities/org_start.dart';
 import 'package:timeedit_parser/models/path_selector.dart';
 
@@ -20,3 +20,4 @@ class EntryPathSelector extends PathSelector {
     return paths;
   }
 }
+*/

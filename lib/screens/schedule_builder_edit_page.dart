@@ -7,8 +7,9 @@ import 'package:timeedit_parser/screens/schedule_object_selector.dart';
 import 'package:timeedit_parser/screens/schedule_path_selector_page.dart';
 
 class ScheduleBuilderEditPage extends StatefulWidget {
-  const ScheduleBuilderEditPage({super.key, required this.builder});
+  const ScheduleBuilderEditPage({super.key, required this.builder, this.onBuilderUpdated});
 
+  final Function(ScheduleBuilder)? onBuilderUpdated;
   final ScheduleBuilder builder;
 
   @override
@@ -16,9 +17,7 @@ class ScheduleBuilderEditPage extends StatefulWidget {
 }
 
 class _ScheduleBuilderEditPageState extends State<ScheduleBuilderEditPage> {
-  String org = "";
-  String entry = "";
-  int pageId = 0;
+  ScheduleBuilder? currentBuilder;
   List<ScheduleObject> objects = [];
   List<FilterQuery> filters = [];
 
@@ -26,9 +25,7 @@ class _ScheduleBuilderEditPageState extends State<ScheduleBuilderEditPage> {
   void initState() {
     super.initState();
 
-    org = widget.builder.org;
-    entry = widget.builder.entry;
-    pageId = widget.builder.pageId;
+    currentBuilder = widget.builder;
     objects = widget.builder.objects;
     filters = widget.builder.filters;
   }
@@ -42,7 +39,7 @@ class _ScheduleBuilderEditPageState extends State<ScheduleBuilderEditPage> {
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: () => {
-              //currentBuilder = widget.builder,
+              if (widget.onBuilderUpdated != null) widget.onBuilderUpdated!(currentBuilder!),
               Navigator.pop(context),
             },
           ),
@@ -54,12 +51,16 @@ class _ScheduleBuilderEditPageState extends State<ScheduleBuilderEditPage> {
           Card(
               child: ListTile(
             title: const Text("Path"),
-            subtitle: Text("${widget.builder.org}/${widget.builder.entry}/${widget.builder.pageId}"),
+            subtitle: Text("${currentBuilder!.org}/${currentBuilder!.entry}/${currentBuilder!.pageId}"),
             onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => SchedulePathSelectorPage(
-                        org: widget.builder.org, entry: widget.builder.entry, pageId: widget.builder.pageId))),
+                          org: currentBuilder!.org,
+                          entry: currentBuilder!.entry,
+                          pageId: currentBuilder!.pageId,
+                          onPathSelected: setPath,
+                        ))),
           )),
           // Objects
           Card(
@@ -69,14 +70,14 @@ class _ScheduleBuilderEditPageState extends State<ScheduleBuilderEditPage> {
             onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ScheduleObjectSelector(builder: widget.builder, onSelected: setObjects))),
+                    builder: (context) => ScheduleObjectSelector(builder: currentBuilder!, onSelected: setObjects))),
           )),
           // URL
           Card(
               child: ListTile(
             title: const Text("Copy URL"),
             onTap: () => {
-              Clipboard.setData(ClipboardData(text: widget.builder.getURL())),
+              Clipboard.setData(ClipboardData(text: currentBuilder!.getURL())),
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text("Copied URL to clipboard"),
@@ -90,8 +91,16 @@ class _ScheduleBuilderEditPageState extends State<ScheduleBuilderEditPage> {
     );
   }
 
+  void setPath(String org, String entry, int pageId) {
+    setState(() {
+      currentBuilder = ScheduleBuilder(org, entry, pageId, filters);
+      currentBuilder!.objects = objects;
+    });
+  }
+
   void setObjects(List<ScheduleObject> objects) {
     setState(() {
+      currentBuilder!.objects = objects;
       this.objects = objects;
     });
   }
