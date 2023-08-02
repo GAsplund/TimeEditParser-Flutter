@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:timeedit/objects/filter_query.dart';
 import 'package:timeedit/objects/schedule_object.dart';
+import 'package:timeedit/objects/timeedit_date.dart';
 import 'package:timeedit/utilities/schedule_builder.dart';
 import 'package:timeedit_parser/screens/schedule_object_selector.dart';
 import 'package:timeedit_parser/screens/schedule_path_selector_page.dart';
+import 'package:timeedit_parser/widgets/schedule_time_selector.dart';
 
 class ScheduleBuilderEditPage extends StatefulWidget {
   const ScheduleBuilderEditPage({super.key, required this.builder, this.onBuilderUpdated});
@@ -72,6 +74,10 @@ class _ScheduleBuilderEditPageState extends State<ScheduleBuilderEditPage> {
                 MaterialPageRoute(
                     builder: (context) => ScheduleObjectSelector(builder: currentBuilder!, onSelected: setObjects))),
           )),
+          // Start
+          ScheduleTimeSelector(title: "Start Time", onTimeChanged: setStartTime),
+          // End
+          ScheduleTimeSelector(title: "End Time", onTimeChanged: setStartTime),
           // URL
           Card(
               child: ListTile(
@@ -102,6 +108,18 @@ class _ScheduleBuilderEditPageState extends State<ScheduleBuilderEditPage> {
     setState(() {
       currentBuilder!.objects = objects;
       this.objects = objects;
+    });
+  }
+
+  void setStartTime(TimeEditDate date) {
+    setState(() {
+      currentBuilder!.startDate = date;
+    });
+  }
+
+  void setEndTime(TimeEditDate date) {
+    setState(() {
+      currentBuilder!.endDate = date;
     });
   }
 }

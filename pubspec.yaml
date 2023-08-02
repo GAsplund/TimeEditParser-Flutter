@@ -44,6 +44,7 @@ dependencies:
   shared_preferences: ^2.1.0
   expansion_tile_card: ^2.0.0
   package_info_plus: ^3.0.3
+  date_time_picker: ^2.1.0
 
 dev_dependencies:
   flutter_test:
