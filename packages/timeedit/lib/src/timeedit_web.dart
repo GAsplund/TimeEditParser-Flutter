@@ -7,6 +7,7 @@ import 'package:timeedit/objects/category.dart';
 import 'package:timeedit/objects/org_entry.dart';
 import 'package:timeedit/objects/page_entry.dart';
 import 'package:timeedit/objects/schedule_object.dart';
+import 'package:timeedit/objects/timeedit_date.dart';
 import 'package:timeedit/utilities/org_start.dart';
 
 const linkbase = "https://cloud.timeedit.net/";
@@ -18,12 +19,13 @@ class TimeEditWeb {
   ///
   /// Returns a JSON object with the schedule.
   static Future<Map<String, dynamic>> getSchedule(
-      String org, String entry, int pageId, List<ScheduleObject> objects) async {
-    return await _getURLJSON(getScheduleURL(org, entry, pageId, objects));
+      String org, String entry, int pageId, TimeEditDate start, TimeEditDate end, List<ScheduleObject> objects) async {
+    return await _getURLJSON(getScheduleURL(org, entry, pageId, start, end, objects));
   }
 
-  static String getScheduleURL(String org, String entry, int pageId, List<ScheduleObject> objects) {
-    String url = linkbase + "$org/web/$entry/ri.json?sid=$pageId";
+  static String getScheduleURL(
+      String org, String entry, int pageId, TimeEditDate start, TimeEditDate end, List<ScheduleObject> objects) {
+    String url = linkbase + "$org/web/$entry/ri.json?sid=$pageId&p=$start,$end";
 
     // Add schedule objects
     url += "&objects=";

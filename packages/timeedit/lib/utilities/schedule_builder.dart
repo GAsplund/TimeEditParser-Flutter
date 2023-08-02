@@ -41,14 +41,14 @@ class ScheduleBuilder {
   addFilterQuery(FilterQuery fq) {}
 
   Future<Schedule> getSchedule() async {
-    Map<String, dynamic> json = await TimeEditWeb.getSchedule(org, entry, pageId, objects);
+    Map<String, dynamic> json = await TimeEditWeb.getSchedule(org, entry, pageId, startDate, endDate, objects);
     List<String> columnHeaders = (json["columnheaders"] as List<dynamic>).cast();
     List<Booking> reservations = (json["reservations"] as List<dynamic>).map((e) => Booking.fromJson(e)).toList();
     return Schedule("", columnHeaders, reservations, startDate, endDate, org, entry, "");
   }
 
   String getURL() {
-    return TimeEditWeb.getScheduleURL(org, entry, pageId, objects);
+    return TimeEditWeb.getScheduleURL(org, entry, pageId, startDate, endDate, objects);
   }
 
   factory ScheduleBuilder.fromJson(Map<String, dynamic> json) {

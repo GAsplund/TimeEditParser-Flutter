@@ -9,7 +9,7 @@ class TimeEditAbsoluteDate extends TimeEditDate {
 
   @override
   String toString() {
-    return DateFormat("yyyyMMdd").format(date);
+    return DateFormat("yyyyMMdd").format(date) + ".x";
   }
 
   @override
