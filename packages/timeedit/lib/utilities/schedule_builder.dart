@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:timeedit/objects/category.dart';
 import 'package:timeedit/objects/filter_query.dart';
 import 'package:timeedit/objects/relative_date.dart';
@@ -64,11 +66,11 @@ class ScheduleBuilder {
     for (FilterQuery filter in this.filters) {
       filters.add(filter.toJson());
     }
-    return {
+    return json.encode({
       "org": org,
       "entry": entry,
       "pageId": pageId,
       "filters": filters,
-    }.toString();
+    });
   }
 }
