@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:timeedit/utilities/org_start.dart';
 
@@ -11,6 +13,7 @@ class OrgSearchPage extends StatefulWidget {
 }
 
 class _OrgSearchPageState extends State<OrgSearchPage> {
+  Timer? _timer;
   String searchTerm = "";
 
   @override
@@ -20,9 +23,7 @@ class _OrgSearchPageState extends State<OrgSearchPage> {
             title: TextField(
           autofocus: true,
           decoration: InputDecoration(hintText: "Search organizations..."),
-          onChanged: (value) => setState(() {
-            searchTerm = value;
-          }),
+          onChanged: _onSearchChanged,
         )),
         body: FutureBuilder(
             future: OrgStart.search(searchTerm),
@@ -44,6 +45,15 @@ class _OrgSearchPageState extends State<OrgSearchPage> {
                   );
                 },
               );
+            }));
+  }
+
+  void _onSearchChanged(String value) {
+    _timer?.cancel();
+    _timer = Timer(
+        const Duration(milliseconds: 500),
+        () => setState(() {
+              searchTerm = value;
             }));
   }
 }
