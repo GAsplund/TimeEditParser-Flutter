@@ -38,6 +38,10 @@ class ScheduleBuilder {
     return await TimeEditWeb.getObjects(org, entry, pageId, types, []);
   }
 
+  Future<List<ScheduleObject>> getObjectsLazy(List<int> types, int start) async {
+    return await TimeEditWeb.getObjects(org, entry, pageId, types, [], start: start);
+  }
+
   addFilterQuery(FilterQuery fq) {}
 
   Future<Schedule> getSchedule() async {

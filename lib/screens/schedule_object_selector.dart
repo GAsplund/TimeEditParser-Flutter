@@ -17,10 +17,19 @@ class ScheduleObjectSelector extends StatefulWidget {
 }
 
 class _ScheduleObjectSelectorState extends State<ScheduleObjectSelector> {
+  final _controller = ScrollController();
+
   int category = -1;
+  bool isLoading = false;
+  bool hasMore = true;
+  int lazyLoadCount = 0;
+  List<ScheduleObject> cachedObjects = [];
 
   @override
   void initState() {
+    isLoading = true;
+    hasMore = true;
+    _controller.addListener(onScroll);
     super.initState();
   }
 
@@ -40,63 +49,101 @@ class _ScheduleObjectSelectorState extends State<ScheduleObjectSelector> {
           ],
         ),
         body: SingleChildScrollView(
+            controller: _controller,
             child: Column(
-          children: [
-            const Text("Category"),
-            FutureBuilder(
-              future: widget.builder.getCategories(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  if (category == -1) category = snapshot.data!.first.id;
-                  return DropdownButton<int>(
-                    value: category,
-                    onChanged: (int? newValue) {
-                      setState(() {
-                        category = newValue!;
-                      });
-                    },
-                    items: snapshot.data!.map<DropdownMenuItem<int>>((Category cat) {
-                      return DropdownMenuItem<int>(
-                        value: cat.id,
-                        child: Text(cat.name),
+              children: [
+                const Text("Category"),
+                FutureBuilder(
+                  future: widget.builder.getCategories(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (category == -1) category = snapshot.data!.first.id;
+                      return DropdownButton<int>(
+                        value: category,
+                        onChanged: (int? newValue) {
+                          setState(() {
+                            category = newValue!;
+                            _clear();
+                          });
+                        },
+                        items: snapshot.data!.map<DropdownMenuItem<int>>((Category cat) {
+                          return DropdownMenuItem<int>(
+                            value: cat.id,
+                            child: Text(cat.name),
+                          );
+                        }).toList(),
                       );
-                    }).toList(),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                }
+                    } else if (snapshot.hasError) {
+                      return Text("${snapshot.error}");
+                    }
 
-                return const CircularProgressIndicator();
-              },
-            ),
-            const Text("Objects"),
-            (category != -1)
-                ? FutureBuilder(
-                    future: widget.builder.getObjects([category]),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return ListView.builder(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(snapshot.data![index].name),
-                              onTap: () => {
-                                if (widget.onSelected != null) widget.onSelected!([snapshot.data![index]]),
-                                Navigator.pop(context),
-                              },
+                    return const CircularProgressIndicator();
+                  },
+                ),
+                const Text("Objects"),
+                (category != -1)
+                    ? ListView.builder(
+                        itemCount: hasMore ? cachedObjects.length + 1 : cachedObjects.length,
+                        itemBuilder: (context, index) {
+                          if (index >= cachedObjects.length) {
+                            return const Center(
+                              child: SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(),
+                              ),
                             );
-                          },
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      }
+                          }
 
-                      return const CircularProgressIndicator();
-                    })
-                : const Text("Select a category")
-          ],
-        )));
+                          return ListTile(
+                            title: Text(cachedObjects[index].name),
+                            onTap: () => {
+                              if (widget.onSelected != null) widget.onSelected!([cachedObjects[index]]),
+                              Navigator.pop(context),
+                            },
+                          );
+                        },
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                      )
+                    : const Text("Select a category")
+              ],
+            )));
+  }
+
+  void onScroll() {
+    if (_controller.position.atEdge) {
+      if (_controller.position.pixels != 0 && !isLoading) {
+        _lazyLoad();
+      }
+    }
+  }
+
+  void _clear() {
+    setState(() {
+      cachedObjects.clear();
+      lazyLoadCount = 0;
+      hasMore = true;
+      _lazyLoad();
+    });
+  }
+
+  void _lazyLoad() {
+    print("Lazy loading");
+    isLoading = true;
+    widget.builder.getObjectsLazy([category], lazyLoadCount).then((List<ScheduleObject> fetchedList) {
+      lazyLoadCount += fetchedList.length;
+      if (fetchedList.isEmpty) {
+        setState(() {
+          isLoading = false;
+          hasMore = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          cachedObjects.addAll(fetchedList);
+        });
+      }
+    });
   }
 }
