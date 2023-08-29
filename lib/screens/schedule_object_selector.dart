@@ -39,7 +39,8 @@ class _ScheduleObjectSelectorState extends State<ScheduleObjectSelector> {
             ),
           ],
         ),
-        body: Column(
+        body: SingleChildScrollView(
+            child: Column(
           children: [
             const Text("Category"),
             FutureBuilder(
@@ -96,6 +97,6 @@ class _ScheduleObjectSelectorState extends State<ScheduleObjectSelector> {
                     })
                 : const Text("Select a category")
           ],
-        ));
+        )));
   }
 }
